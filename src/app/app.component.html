@@ -1,15 +1,18 @@
-<nav class="navbar navbar-light bg-light px-3">
-
-  <div class="ml-auto">
+<div class="page-shell">
+  <header class="site-header">
+    <a class="brand" routerLink="/">DataShare</a>
+    <nav aria-label="Navigation principale">
     @if (isLoggedIn()) {
-      <button type="button" class="btn btn-outline-danger" (click)="logout()">
-        Logout
+      <button type="button" class="login-link" (click)="logout()">
+        Se déconnecter
       </button>
     } @else {
-      <a class="btn btn-link" routerLink="/login">Login</a>
-      <a class="btn btn-outline-primary" routerLink="/register">Register</a>
+      <a class="login-link" routerLink="/login">Se connecter</a>
     }
-  </div>
-</nav>
-
-<router-outlet />
+    </nav>
+  </header>
+  <main class="site-main">
+    <router-outlet />
+  </main>
+  <footer class="site-footer">Copyright DataShare® 2025</footer>
+</div>

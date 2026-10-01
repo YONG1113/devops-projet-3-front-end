@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { UserService } from '../../core/service/user.service';
 import { LoginComponent } from './login.component';
@@ -14,6 +15,7 @@ describe('LoginComponent', () => {
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
       providers: [
+        provideRouter([]),
         { provide: UserService, useValue: userService }
       ]
     }).compileComponents();
@@ -42,11 +44,11 @@ describe('LoginComponent', () => {
     const token = 'header.payload.signature';
     userService.login.mockReturnValue(of(token));
     jest.spyOn(window, 'alert').mockImplementation(() => undefined);
-    component.loginForm.setValue({ login: 'john', password: 'password' });
+    component.loginForm.setValue({ login: 'john@example.com', password: 'password' });
 
     component.onSubmit();
 
-    expect(userService.login).toHaveBeenCalledWith('john', 'password');
+    expect(userService.login).toHaveBeenCalledWith('john@example.com', 'password');
     expect(localStorage.getItem('token')).toBe(token);
     expect(window.alert).toHaveBeenCalledWith('Login successful!');
     expect(component.loginForm.value).toEqual({ login: null, password: null });
@@ -54,11 +56,11 @@ describe('LoginComponent', () => {
 
   it('should display an error when login fails', () => {
     userService.login.mockReturnValue(throwError(() => new Error('Unauthorized')));
-    component.loginForm.setValue({ login: 'john', password: 'wrong-password' });
+    component.loginForm.setValue({ login: 'john@example.com', password: 'wrong-password' });
 
     component.onSubmit();
 
-    expect(component.errorMessage).toBe('Invalid login or password');
+    expect(component.errorMessage).toBe('Email ou mot de passe incorrect');
     expect(localStorage.getItem('token')).toBeNull();
   });
 

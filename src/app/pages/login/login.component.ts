@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -8,9 +9,9 @@ import { UserService } from '../../core/service/user.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, RouterLink],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
 })
 export class LoginComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
@@ -23,8 +24,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      login: ['', Validators.required],
-      password: ['', Validators.required]
+      login: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
     });
   }
 
@@ -34,25 +35,28 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
+    console.log('test');
 
     if (this.loginForm.invalid) {
       return;
     }
+    console.log('test!');
 
     this.errorMessage = '';
     const { login, password } = this.loginForm.getRawValue();
 
-    this.userService.login(login, password)
+    this.userService
+      .login(login, password)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: token => {
+        next: (token) => {
           localStorage.setItem('token', token);
           alert('Login successful!');
           this.onReset();
         },
         error: () => {
-          this.errorMessage = 'Invalid login or password';
-        }
+          this.errorMessage = 'Email ou mot de passe incorrect';
+        },
       });
   }
 

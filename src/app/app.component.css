@@ -1,0 +1,68 @@
+:host {
+  display: block;
+}
+
+.page-shell {
+  height: 100vh;
+  height: 100dvh;
+  display: grid;
+  grid-template-rows: 72px minmax(0, 1fr) 56px;
+  background: linear-gradient(160deg, #FFB88C 10%, #DE6262 100%);
+  color: #080808;
+}
+
+.site-header,
+.site-footer {
+  width: 100%;
+  padding-inline: 120px;
+  display: flex;
+  align-items: center;
+  
+}
+
+.site-header {
+  padding-inline: 120px;
+  justify-content: space-between;
+}
+
+.brand {
+  color: inherit;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+}
+
+.login-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #302b25;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.login-link:hover { background: #17130f; }
+.brand:focus-visible,
+.login-link:focus-visible { outline: 3px solid #fff; outline-offset: 5px; }
+
+.site-main {
+  display: grid;
+  width: 100%;
+  min-height: 0;
+  overflow: auto;
+}
+
+.site-main > router-outlet { display: none; }
+
+.site-footer {
+  color: #fff;
+  font-size: 16px;
+}
