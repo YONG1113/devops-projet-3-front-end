@@ -2,14 +2,10 @@
   <h5 class="card-header">Connexion</h5>
   <div class="card-body">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-      @if (errorMessage) {
-        <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
-      }
-
       <div class="form-group">
         <label for="email">Email</label>
         <input
-          id="email"
+          id="login"
           type="email"
           placeholder="Saisissez votre email..."
           formControlName="login"
@@ -17,12 +13,14 @@
           autocomplete="username"
           [ngClass]="{ 'is-invalid': submitted && form['login'].errors }"
         />
-        @if (submitted && form['login'].errors?.['required']) {
-          <div class="invalid-feedback">L’email est obligatoire.</div>
-        }
-        @if (submitted && form['login'].errors?.['email']) {
-          <div class="invalid-feedback">Veuillez saisir une adresse email valide.</div>
-        }
+        <div class="error-container">
+          @if (submitted && form['login'].errors?.['required']) {
+            <div class="error-message">L’email est obligatoire.</div>
+          }
+          @if (submitted && form['login'].errors?.['email']) {
+            <div class="error-message">Veuillez saisir une adresse email valide.</div>
+          }
+        </div>
       </div>
 
       <div class="form-group">
@@ -36,9 +34,11 @@
           autocomplete="current-password"
           [ngClass]="{ 'is-invalid': submitted && form['password'].errors }"
         />
-        @if (submitted && form['password'].errors?.['required']) {
-          <div class="invalid-feedback">Password is required</div>
-        }
+        <div class="error-container">
+          @if (submitted && form['password'].errors?.['required']) {
+            <div class="error-message">Password is required</div>
+          }
+        </div>
       </div>
 
       <div class="button-center">

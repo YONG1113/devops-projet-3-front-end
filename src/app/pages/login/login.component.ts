@@ -35,12 +35,10 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
-    console.log('test');
 
     if (this.loginForm.invalid) {
       return;
     }
-    console.log('test!');
 
     this.errorMessage = '';
     const { login, password } = this.loginForm.getRawValue();
@@ -56,6 +54,7 @@ export class LoginComponent implements OnInit {
         },
         error: () => {
           this.errorMessage = 'Email ou mot de passe incorrect';
+          alert(this.errorMessage);
         },
       });
   }
