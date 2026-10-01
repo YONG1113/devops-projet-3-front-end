@@ -1,0 +1,25 @@
+{
+  "minimumPassPercentage": 80,
+  "scenarios": [
+    {
+      "id": "E2E-01",
+      "name": "registers a user"
+    },
+    {
+      "id": "E2E-02",
+      "name": "logs in"
+    },
+    {
+      "id": "E2E-06",
+      "name": "logs out"
+    },
+    {
+      "id": "E2E-07",
+      "name": "shows required errors without submitting an empty form"
+    },
+    {
+      "id": "E2E-08",
+      "name": "clears values and validation errors when cancelling"
+    }
+  ]
+}

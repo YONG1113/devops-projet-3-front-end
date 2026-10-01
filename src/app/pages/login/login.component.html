@@ -1,0 +1,47 @@
+<div class="card m-3">
+  <h5 class="card-header">Login Form</h5>
+  <div class="card-body">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      @if (errorMessage) {
+        <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+      }
+
+      <div class="form-group">
+        <label for="login">Login</label>
+        <input
+          id="login"
+          type="text"
+          formControlName="login"
+          class="form-control"
+          autocomplete="username"
+          [ngClass]="{ 'is-invalid': submitted && form['login'].errors }"
+        />
+        @if (submitted && form['login'].errors?.['required']) {
+          <div class="invalid-feedback">Login is required</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          class="form-control"
+          autocomplete="current-password"
+          [ngClass]="{ 'is-invalid': submitted && form['password'].errors }"
+        />
+        @if (submitted && form['password'].errors?.['required']) {
+          <div class="invalid-feedback">Password is required</div>
+        }
+      </div>
+
+      <div class="text-center">
+        <button class="btn btn-primary mr-1" type="submit">Login</button>
+        <button class="btn btn-secondary" type="reset" (click)="onReset()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

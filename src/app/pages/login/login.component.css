@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.card {
+  max-width: 560px;
+  margin-right: auto !important;
+  margin-left: auto !important;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}

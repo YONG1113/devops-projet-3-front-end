@@ -1,0 +1,80 @@
+<div class="card m-3">
+  <h5 class="card-header">Registration Form</h5>
+  <div class="card-body">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group col-5">
+          <label>First Name</label>
+          <input
+            type="text"
+            formControlName="firstName"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && form['firstName'].errors }"
+          />
+          @if (submitted && form['firstName'].errors) {
+            <div class="invalid-feedback">
+              @if (form['firstName'].errors?.['required']) {
+                <div>First Name is required</div>
+              }
+            </div>
+          }
+        </div>
+        <div class="form-group col-5">
+          <label>Last Name</label>
+          <input
+            type="text"
+            formControlName="lastName"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && form['lastName'].errors }"
+          />
+          @if (submitted && form['lastName'].errors) {
+            <div class="invalid-feedback">
+              @if (form['lastName'].errors?.['required']) {
+                <div>Last Name is required</div>
+              }
+            </div>
+          }
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Login</label>
+        <input
+          type="text"
+          formControlName="login"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && form['login'].errors }"
+        />
+        @if (submitted && form['login'].errors) {
+          <div class="invalid-feedback">
+            @if (form['login'].errors?.['required']) {
+              <div>Login is required</div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input
+          type="text"
+          formControlName="password"
+          class="form-control"
+          [ngClass]="{ 'is-invalid': submitted && form['password'].errors }"
+        />
+        @if (submitted && form['password'].errors) {
+          <div class="invalid-feedback">
+            @if (form['password'].errors?.['required']) {
+              <div>password is required</div>
+            }
+          </div>
+        }
+      </div>
+      <div class="text-center">
+        <button class="btn btn-primary mr-1">Register</button>
+        <button class="btn btn-secondary" type="reset" (click)="onReset()">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
