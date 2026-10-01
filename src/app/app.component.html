@@ -2,13 +2,11 @@
   <header class="site-header">
     <a class="brand" routerLink="/">DataShare</a>
     <nav aria-label="Navigation principale">
-    @if (isLoggedIn()) {
-      <button type="button" class="login-link" (click)="logout()">
-        Se déconnecter
-      </button>
-    } @else {
-      <a class="login-link" routerLink="/login">Se connecter</a>
-    }
+      @if (isLoggedIn()) {
+        <button type="button" class="login-link" (click)="logout()">Mon espace</button>
+      } @else {
+        <a class="login-link" routerLink="/login">Se connecter</a>
+      }
     </nav>
   </header>
   <main class="site-main">

@@ -1,18 +1,25 @@
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { MaterialModule } from '../../shared/material.module';
 import { UserService } from '../../core/service/user.service';
 import { Register } from '../../core/models/Register';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+
+const passwordsMatch: ValidatorFn = (form) => {
+  const password = form.get('password')?.value;
+  const confirmation = form.get('repassword')?.value;
+  return password && confirmation && password !== confirmation ? { passwordMismatch: true } : null;
+};
 
 @Component({
   selector: 'app-register',
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, RouterLink],
   templateUrl: './register.component.html',
   standalone: true,
-  styleUrl: './register.component.css'
+  styleUrl: './register.component.css',
 })
 export class RegisterComponent implements OnInit {
   private userService = inject(UserService);
@@ -21,15 +28,16 @@ export class RegisterComponent implements OnInit {
   private router = inject(Router);
   registerForm: FormGroup = new FormGroup({});
   submitted: boolean = false;
+  errorMessage = '';
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group(
       {
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
-        login: ['', Validators.required],
-        password: ['', Validators.required]
+        login: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(8)]],
+        repassword: ['', Validators.required],
       },
+      { validators: passwordsMatch },
     );
   }
 
@@ -42,24 +50,30 @@ export class RegisterComponent implements OnInit {
     if (this.registerForm.invalid) {
       return;
     }
+    this.errorMessage = '';
     const registerUser: Register = {
-      firstName: this.registerForm.get('firstName')?.value,
-      lastName: this.registerForm.get('lastName')?.value,
       login: this.registerForm.get('login')?.value,
-      password: this.registerForm.get('password')?.value
+      password: this.registerForm.get('password')?.value,
     };
-    this.userService.register(registerUser)
+    this.userService
+      .register(registerUser)
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(
-      () => {
-        alert('SUCCESS!! :-)');
-        this.router.navigate(['/login']);
-      },
-    );
+      .subscribe({
+        next: (response) => {
+          alert('SUCCESS!! :-)');
+          this.router.navigate(['/login']);
+        },
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage =
+            error.error?.message ?? 'Une erreur est survenue. Veuillez réessayer.';
+          alert(this.errorMessage);
+        },
+      });
   }
 
   onReset(): void {
     this.submitted = false;
     this.registerForm.reset();
+    this.errorMessage = '';
   }
 }

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { provideRouter, Router } from '@angular/router';
+import { of, throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 import { RegisterComponent } from './register.component';
 import { UserService } from '../../core/service/user.service';
 
@@ -18,10 +19,11 @@ describe('RegisterComponent', () => {
       imports: [RegisterComponent],
       providers: [
         { provide: UserService, useValue: userService },
-        { provide: Router, useValue: router }
+        provideRouter([])
       ]
     }).compileComponents();
 
+    router.navigate = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -43,12 +45,10 @@ describe('RegisterComponent', () => {
     userService.register.mockReturnValue(of(null));
     jest.spyOn(window, 'alert').mockImplementation(() => undefined);
     const user = {
-      firstName: 'John',
-      lastName: 'Doe',
-      login: 'john',
+      login: 'john@example.com',
       password: 'password'
     };
-    component.registerForm.setValue(user);
+    component.registerForm.setValue({ ...user, repassword: user.password });
 
     component.onSubmit();
 
@@ -56,17 +56,59 @@ describe('RegisterComponent', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/login']);
   });
 
+  it('should reject a seven-character password and display the minimum length', () => {
+    component.registerForm.setValue({ login: 'john@example.com', password: '1234567', repassword: '1234567' });
+    component.onSubmit();
+    fixture.detectChanges();
+
+    expect(userService.register).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain('Mot de passe : minimum 8 caractères.');
+  });
+
+  it('should block mismatched passwords and revalidate changes to either field', () => {
+    component.registerForm.setValue({ login: 'john@example.com', password: 'password', repassword: 'different' });
+    component.onSubmit();
+    fixture.detectChanges();
+
+    expect(userService.register).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.textContent).toContain('Les mots de passe doivent être identiques.');
+
+    component.form['repassword'].setValue('password');
+    expect(component.registerForm.valid).toBe(true);
+
+    component.form['password'].setValue('changed-password');
+    expect(component.registerForm.hasError('passwordMismatch')).toBe(true);
+
+    component.form['repassword'].setValue('');
+    expect(component.form['repassword'].hasError('required')).toBe(true);
+    expect(component.registerForm.hasError('passwordMismatch')).toBe(false);
+  });
+
+  it.each([0, 400, 500])('should display an error and preserve input for HTTP status %s', (status) => {
+    userService.register.mockReturnValue(throwError(() => new HttpErrorResponse({ status })));
+    const values = { login: 'john@example.com', password: 'password', repassword: 'password' };
+    component.registerForm.setValue(values);
+
+    component.onSubmit();
+    fixture.detectChanges();
+
+    expect(component.errorMessage).not.toBe('');
+    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(component.errorMessage);
+    expect(component.registerForm.value).toEqual(values);
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
   it('should reset the form', () => {
     component.submitted = true;
     component.registerForm.setValue({
-      firstName: 'John', lastName: 'Doe', login: 'john', password: 'password'
+      login: 'john@example.com', password: 'password', repassword: 'password'
     });
 
     component.onReset();
 
     expect(component.submitted).toBe(false);
     expect(component.registerForm.value).toEqual({
-      firstName: null, lastName: null, login: null, password: null
+      login: null, password: null, repassword: null
     });
   });
 });

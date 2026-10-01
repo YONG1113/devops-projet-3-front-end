@@ -1,79 +1,76 @@
-<div class="card m-3">
-  <h5 class="card-header">Registration Form</h5>
+<div class="card">
+  <h5 class="card-header">Créer un compte</h5>
   <div class="card-body">
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-      <div class="form-row">
-        <div class="form-group col-5">
-          <label>First Name</label>
-          <input
-            type="text"
-            formControlName="firstName"
-            class="form-control"
-            [ngClass]="{ 'is-invalid': submitted && form['firstName'].errors }"
-          />
-          @if (submitted && form['firstName'].errors) {
-            <div class="invalid-feedback">
-              @if (form['firstName'].errors?.['required']) {
-                <div>First Name is required</div>
-              }
-            </div>
-          }
-        </div>
-        <div class="form-group col-5">
-          <label>Last Name</label>
-          <input
-            type="text"
-            formControlName="lastName"
-            class="form-control"
-            [ngClass]="{ 'is-invalid': submitted && form['lastName'].errors }"
-          />
-          @if (submitted && form['lastName'].errors) {
-            <div class="invalid-feedback">
-              @if (form['lastName'].errors?.['required']) {
-                <div>Last Name is required</div>
-              }
-            </div>
-          }
-        </div>
-      </div>
       <div class="form-group">
-        <label>Login</label>
+        <label for="email">Email</label>
         <input
-          type="text"
+          id="login"
+          type="email"
+          placeholder="Saisissez votre email..."
           formControlName="login"
-          class="form-control"
+          class="login-input"
+          autocomplete="username"
           [ngClass]="{ 'is-invalid': submitted && form['login'].errors }"
         />
-        @if (submitted && form['login'].errors) {
-          <div class="invalid-feedback">
-            @if (form['login'].errors?.['required']) {
-              <div>Login is required</div>
-            }
-          </div>
-        }
+        <div class="error-container">
+          @if (submitted && form['login'].errors?.['required']) {
+            <div class="error-message">L’email est obligatoire.</div>
+          }
+          @if (submitted && form['login'].errors?.['email']) {
+            <div class="error-message">Veuillez saisir une adresse email valide.</div>
+          }
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Password</label>
+        <label for="password">votre mot de passe</label>
         <input
-          type="text"
+          id="password"
+          type="password"
+          placeholder="Saisissez votre mot de passe..."
           formControlName="password"
-          class="form-control"
+          class="login-input"
+          autocomplete="current-password"
           [ngClass]="{ 'is-invalid': submitted && form['password'].errors }"
         />
-        @if (submitted && form['password'].errors) {
-          <div class="invalid-feedback">
-            @if (form['password'].errors?.['required']) {
-              <div>password is required</div>
-            }
-          </div>
-        }
+        <div class="error-container">
+          @if (submitted && form['password'].errors?.['required']) {
+            <div class="error-message">Le mot de passe est requis.</div>
+          }
+          @if (submitted && form['password'].errors?.['minlength']) {
+            <div class="error-message">Mot de passe : minimum 8 caractères.</div>
+          }
+        </div>
       </div>
-      <div class="text-center">
-        <button class="btn btn-primary mr-1">Register</button>
-        <button class="btn btn-secondary" type="reset" (click)="onReset()">
-          Cancel
-        </button>
+
+      <div class="form-group">
+        <label for="repassword">Verification du mot de passe</label>
+        <input
+          id="repassword"
+          type="password"
+          placeholder="Saisissez le a nouveau"
+          formControlName="repassword"
+          class="login-input"
+          autocomplete="current-password"
+          [ngClass]="{
+            'is-invalid':
+              submitted && (form['repassword'].errors || registerForm.hasError('passwordMismatch')),
+          }"
+        />
+        <div class="error-container">
+          @if (submitted && form['repassword'].errors?.['required']) {
+            <div class="error-message">Veuillez confirmer votre mot de passe.</div>
+          }
+          @if (submitted && registerForm.hasError('passwordMismatch')) {
+            <div class="error-message">Les mots de passe doivent être identiques.</div>
+          }
+        </div>
+      </div>
+
+      <div class="button-center">
+        <a class="login-button" routerLink="/login">Jai deja un compte</a>
+        <button class="login-button" type="submit">Creer mon compte</button>
       </div>
     </form>
   </div>
