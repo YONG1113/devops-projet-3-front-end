@@ -3,7 +3,7 @@ import { HttpInterceptorFn } from '@angular/common/http';
 export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const token = localStorage.getItem('token');
 
-  if (!token) {
+  if (!token || request.headers.has('Authorization')) {
     return next(request);
   }
 

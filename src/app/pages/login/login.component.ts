@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -17,6 +17,7 @@ export class LoginComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private userService = inject(UserService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   loginForm: FormGroup = new FormGroup({});
   submitted = false;
@@ -50,6 +51,7 @@ export class LoginComponent implements OnInit {
         next: (token) => {
           localStorage.setItem('token', token);
           alert('Login successful!');
+          this.router.navigate(['']);
           this.onReset();
         },
         error: () => {
