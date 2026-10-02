@@ -2,10 +2,12 @@ import { Routes } from '@angular/router';
 import { RegisterComponent } from './pages/register/register.component';
 import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
+import { UploadComponent } from './pages/upload/upload.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: '**', redirectTo: 'login' }
+  { path: 'upload', component: UploadComponent },
+  { path: '**', redirectTo: 'login' },
 ];

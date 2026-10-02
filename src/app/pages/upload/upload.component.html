@@ -1,0 +1,63 @@
+<div class="card">
+  <h5 class="card-header">ajouter un fichier</h5>
+  <div class="card-body">
+    <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+      <div>
+        <img class="file-logo" src="Vector.svg" alt="" width="16" height="16" />
+        <span class="file-name-label">{{ file?.name || 'Veuillez sélectionner un fichier.' }}</span>
+        <input #fileInput type="file" hidden (change)="changeFile($event)" />
+        <button
+          class="change-file-button"
+          type="button"
+          [disabled]="uploading"
+          (click)="fileInput.click()"
+        >
+          changer
+        </button>
+      </div>
+      <div class="form-group">
+        <label for="password">votre mot de passe</label>
+        <input
+          id="password"
+          type="password"
+          placeholder="Optionel"
+          formControlName="password"
+          class="login-input"
+          autocomplete="current-password"
+          [ngClass]="{ 'is-invalid': submitted && form['password'].errors }"
+        />
+        <div class="error-container">
+          @if (submitted && form['password'].errors?.['required']) {
+            <div class="error-message">Password is required</div>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="experation">Experation</label>
+
+        <select class="login-input" id="experation" name="experation">
+          <option value="1">1 jour</option>
+          <option value="2">2 jour</option>
+          <option value="3">3 jour</option>
+        </select>
+
+        <div class="error-container">
+          @if (submitted && form['password'].errors?.['required']) {
+            <div class="error-message">Password is required</div>
+          }
+        </div>
+      </div>
+
+      <div class="button-center">
+        <button class="televerser-button" type="submit" [disabled]="!file || uploading || uploaded">
+          <img src="Icon.svg" alt="" width="16" height="16" />
+          televerser
+        </button>
+      </div>
+      @if (message) {
+        <p role="status">{{ message }}</p>
+      }
+    </form>
+  </div>
+</div>

@@ -6,11 +6,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class FileService {
+  selectedFile: File | null = null;
+
   constructor(private httpClient: HttpClient) {}
 
-  uploadFile(file: File): Observable<unknown> {
+  uploadFile(file: File, userId: string): Observable<unknown> {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('userId', userId);
 
     return this.httpClient.post('/api/file', formData);
   }

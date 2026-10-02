@@ -26,4 +26,8 @@ export class UserService {
   logout(): void {
     localStorage.removeItem('token');
   }
+
+  getCurrentUser(): Observable<{ id: string }> {
+    return this.httpClient.get<{ id: string }>('/api/me');
+  }
 }

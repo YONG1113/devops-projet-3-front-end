@@ -4,8 +4,7 @@
   <button
     class="upload-button"
     type="button"
-    [disabled]="uploading"
-    (click)="fileInput.click()"
+    (click)="chooseFile(fileInput)"
     aria-label="Partager un fichier"
   >
     <img class="upload-image" src="Frame3.svg" alt="" />
