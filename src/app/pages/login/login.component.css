@@ -99,7 +99,7 @@
   height: 10px;
 }
 
-.login-button:focus {
+/* .login-button:focus {
   outline: none;
   box-shadow: 0 0 0 0.5px #E27F29;;
 }
@@ -107,4 +107,4 @@
 .login-button:active {
   outline: none;
   box-shadow: 0 0 0 0.5px #E27F29;;
-}
+} */

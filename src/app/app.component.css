@@ -7,7 +7,7 @@
   height: 100dvh;
   display: grid;
   grid-template-rows: 72px minmax(0, 1fr) 56px;
-  background: linear-gradient(160deg, #FFB88C 10%, #DE6262 100%);
+  background: linear-gradient(172.84deg, #FFB88C 2.29%, #DE6262 97.71%);
   color: #080808;
 }
 
@@ -17,7 +17,7 @@
   padding-inline: 120px;
   display: flex;
   align-items: center;
-  
+
 }
 
 .site-header {
@@ -49,9 +49,15 @@
   cursor: pointer;
 }
 
-.login-link:hover { background: #17130f; }
+.login-link:hover {
+  background: #17130f;
+}
+
 .brand:focus-visible,
-.login-link:focus-visible { outline: 3px solid #fff; outline-offset: 5px; }
+.login-link:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 5px;
+}
 
 .site-main {
   display: grid;
@@ -60,7 +66,9 @@
   overflow: auto;
 }
 
-.site-main > router-outlet { display: none; }
+.site-main>router-outlet {
+  display: none;
+}
 
 .site-footer {
   color: #fff;
