@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { FileService } from '../../core/service/file.service';
 import { UserService } from '../../core/service/user.service';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [CommonModule, MaterialModule, RouterLink],
+  imports: [CommonModule, MaterialModule],
   templateUrl: './upload.component.html',
   styleUrl: './upload.component.css',
 })
@@ -30,6 +30,7 @@ export class UploadComponent {
   ngOnInit(): void {
     this.uploadForm = this.formBuilder.group({
       password: [''],
+      expirationDays: [7, [Validators.required, Validators.min(1), Validators.max(7)]],
     });
   }
 
@@ -56,6 +57,10 @@ export class UploadComponent {
   }
 
   upload(): void {
+    if (this.uploadForm.invalid) {
+      this.uploadForm.markAllAsTouched();
+      return;
+    }
     const file = this.file;
     if (!file || this.uploading || this.uploaded) {
       return;
@@ -68,11 +73,12 @@ export class UploadComponent {
 
     this.uploading = true;
     this.message = 'Envoi en cours...';
+    const { expirationDays, password } = this.uploadForm.getRawValue();
 
     this.userService
       .getCurrentUser()
       .pipe(
-        switchMap((user) => this.fileService.uploadFile(file, user.id)),
+        switchMap((user) => this.fileService.uploadFile(file, user.id, expirationDays, password)),
         takeUntilDestroyed(this.destroyRef),
         finalize(() => {
           this.uploading = false;
@@ -93,5 +99,15 @@ export class UploadComponent {
           }
         },
       });
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) {
+      return `${bytes} B`;
+    }
+    if (bytes < 1024 * 1024) {
+      return `${(bytes / 1024).toFixed(2)} KB`;
+    }
+    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   }
 }

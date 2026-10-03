@@ -4,23 +4,33 @@
 }
 
 .card {
-    width: 640px;
-    max-width: 640px;
-    height: 400px;
+    width: 412px;
+    max-width: 412px;
+    height: 414px;
     flex-shrink: 0;
-    gap: 24px;
     padding: 24px;
     border-radius: 16px;
     opacity: 1;
     margin: auto;
+    max-width: 1280px;
+    gap: 24px;
+    border-radius: 16px;
+    padding-top: 24px;
+    padding-right: 32px;
+    padding-bottom: 24px;
+    padding-left: 32px;
+
 }
 
 .card-header {
     margin: 0;
     padding: 0;
-    font-family: inherit;
+    width: 348px;
+    height: 40px;
+    gap: 16px;
+    font-family: Inter;
     font-weight: 700;
-    font-style: normal;
+    font-style: Bold;
     font-size: 28px;
     line-height: 40px;
     letter-spacing: 0;
@@ -29,12 +39,66 @@
     border-bottom: none;
 }
 
-.card-body {
-    padding: 0;
+.change-file-section {
+    width: 348px;
+    height: 56px;
+    gap: 16px;
+    opacity: 1;
+    display: flex;
+    align-items: center;
 }
 
-.form-group {
-    margin-bottom: 1rem;
+.change-name-section {
+    width: 245px;
+    height: 56px;
+    gap: 16px;
+    opacity: 1;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+
+}
+
+.file-name-label {
+    width: 189px;
+    height: 40px;
+    opacity: 1;
+    font-family: Inter;
+    font-weight: 400;
+    font-style: Regular;
+    font-size: 16px;
+    line-height: 24px;
+    letter-spacing: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.change-file-button {
+    width: 87px;
+    height: 32px;
+    gap: 8px;
+    border: 1px solid rgba(255, 165, 105, 1);
+    background: rgba(226, 127, 41, 1);
+    border-radius: var(--Radius-200, 8px);
+    background: var(--Background-Default-Default, #FFFFFF);
+    color: rgba(186, 104, 31, 1);
+    font-size: 14px;
+}
+
+.form-config {
+    width: 100%;
+    gap: 16px;
+    opacity: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 24px;
+
+}
+
+.card-body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .button-center {
@@ -60,44 +124,42 @@
 
 }
 
-.change-file-button {
-    width: 87px;
-    height: 32px;
-    gap: 8px;
-    border: 1px solid rgba(255, 165, 105, 1);
-    background: rgba(226, 127, 41, 1);
-    border-radius: var(--Radius-200, 8px);
-    background: var(--Background-Default-Default, #FFFFFF);
-    color: rgba(186, 104, 31, 1);
-    font-size: 14px;
 
-}
 
 .televerser-button {
-    font-family: inherit;
-    font-weight: 400;
-    font-style: normal;
     font-size: 16px;
+    font-weight: 400;
     line-height: 16px;
-    letter-spacing: 0;
+
     color: rgba(186, 104, 31, 1);
-    text-decoration: none;
     background: rgba(255, 129, 45, 0.13);
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+
     width: 123px;
     height: 40px;
-    gap: 8px;
-    opacity: 1;
-    border-radius: var(--Radius-200, 8px);
-    border-width: var(--Stroke-Border, 1px);
-    border-style: solid;
-    padding: var(--Space-300, 12px);
+
     border: 1px solid rgba(205, 94, 20, 0.5);
+    border-radius: 8px;
 }
 
-.login-input {
+.upload-input {
+    width: 345px;
+    height: 40px;
+    gap: 16px;
+    border-radius: 8px;
+
+    opacity: 1;
+    width: 345;
+    min-width: 240px;
+    opacity: 1;
+    border: 1px solid var(--Border-Default-Default, rgba(217, 217, 217, 1))
+}
+
+/* .login-input {
     background: var(--Background-Default-Default, #FFFFFF);
     border: 1px solid var(--Border-Default-Default, #D9D9D9);
     box-sizing: border-box;
@@ -109,7 +171,7 @@
     padding: 12px 16px;
     font-size: 14px;
     line-height: 14px;
-}
+} */
 
 .error-message {
     color: #dc3545;
@@ -118,7 +180,7 @@
 }
 
 .error-container {
-    height: 10px;
+    height: 5px;
 }
 
 /* .login-button:focus {

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,10 +10,12 @@ export class FileService {
 
   constructor(private httpClient: HttpClient) {}
 
-  uploadFile(file: File, userId: string): Observable<unknown> {
+  uploadFile(file: File, userId: string, expirationDays: number, password: string): Observable<unknown> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('userId', userId);
+    formData.append('expirationDays', String(expirationDays));
+    formData.append('password', password);
 
     return this.httpClient.post('/api/file', formData);
   }

@@ -1,51 +1,60 @@
 <div class="card">
-  <h5 class="card-header">ajouter un fichier</h5>
+  <div><h2 class="card-header">ajouter un fichier</h2></div>
+
   <div class="card-body">
     <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
-      <div>
-        <img class="file-logo" src="Vector.svg" alt="" width="16" height="16" />
-        <span class="file-name-label">{{ file?.name || 'Veuillez sélectionner un fichier.' }}</span>
-        <input #fileInput type="file" hidden (change)="changeFile($event)" />
-        <button
-          class="change-file-button"
-          type="button"
-          [disabled]="uploading"
-          (click)="fileInput.click()"
-        >
-          changer
-        </button>
-      </div>
-      <div class="form-group">
-        <label for="password">votre mot de passe</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Optionel"
-          formControlName="password"
-          class="login-input"
-          autocomplete="current-password"
-          [ngClass]="{ 'is-invalid': submitted && form['password'].errors }"
-        />
-        <div class="error-container">
-          @if (submitted && form['password'].errors?.['required']) {
-            <div class="error-message">Password is required</div>
-          }
+      @if (file) {
+        <div class="change-file-section">
+          <div class="change-name-section">
+            <div><img src="Vector.svg" /></div>
+            <div class="file-name-label">
+              <span>{{ file?.name || 'Veuillez sélectionner un fichier.' }}</span>
+              <span>{{ formatFileSize(file.size) }}</span>
+            </div>
+          </div>
+          <input #fileInput type="file" hidden (change)="changeFile($event)" />
+          <button
+            class="change-file-button"
+            type="button"
+            [disabled]="uploading"
+            (click)="fileInput.click()"
+          >
+            changer
+          </button>
         </div>
-      </div>
+      }
+      <div class="form-config">
+        <div>
+          <label for="password">Mot de passe</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Optionnel"
+            formControlName="password"
+            class="upload-input"
+            autocomplete="new-password"
+          />
+          <div class="error-container"></div>
+        </div>
 
-      <div class="form-group">
-        <label for="experation">Experation</label>
+        <div class="form-group">
+          <label for="expirationDays">Expiration</label>
 
-        <select class="login-input" id="experation" name="experation">
-          <option value="1">1 jour</option>
-          <option value="2">2 jour</option>
-          <option value="3">3 jour</option>
-        </select>
+          <select class="upload-input" id="expirationDays" formControlName="expirationDays">
+            <option [ngValue]="1">1 jour</option>
+            <option [ngValue]="2">2 jours</option>
+            <option [ngValue]="3">3 jours</option>
+            <option [ngValue]="4">4 jours</option>
+            <option [ngValue]="5">5 jours</option>
+            <option [ngValue]="6">6 jours</option>
+            <option [ngValue]="7">7 jours</option>
+          </select>
 
-        <div class="error-container">
-          @if (submitted && form['password'].errors?.['required']) {
-            <div class="error-message">Password is required</div>
-          }
+          <div class="error-container">
+            @if (submitted && form['expirationDays'].errors) {
+              <div class="error-message">Veuillez choisir une durée entre 1 et 7 jours.</div>
+            }
+          </div>
         </div>
       </div>
 
