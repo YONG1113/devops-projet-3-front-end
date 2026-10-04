@@ -1,72 +1,112 @@
-<div class="card">
-  <div><h2 class="card-header">ajouter un fichier</h2></div>
+@if (!uploaded) {
+  <div class="card">
+    <div><h2 class="card-header">ajouter un fichier</h2></div>
+    <div class="card-body">
+      <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
+        @if (file) {
+          <div class="change-file-section">
+            <div class="change-name-section">
+              <div><img src="Vector.svg" /></div>
+              <div class="file-name-label">
+                <span>{{ file?.name || 'Veuillez sélectionner un fichier.' }}</span>
+                <span>{{ formatFileSize(file.size) }}</span>
+              </div>
+            </div>
+            <input #fileInput type="file" hidden (change)="changeFile($event)" />
+            <button
+              class="change-file-button"
+              type="button"
+              [disabled]="uploading"
+              (click)="fileInput.click()"
+            >
+              changer
+            </button>
+          </div>
+        }
+        <div class="form-config">
+          <div>
+            <label for="password">Mot de passe</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Optionnel"
+              formControlName="password"
+              class="upload-input"
+              autocomplete="new-password"
+            />
+            <div class="error-container"></div>
+          </div>
 
-  <div class="card-body">
-    <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
-      @if (file) {
-        <div class="change-file-section">
-          <div class="change-name-section">
-            <div><img src="Vector.svg" /></div>
-            <div class="file-name-label">
-              <span>{{ file?.name || 'Veuillez sélectionner un fichier.' }}</span>
-              <span>{{ formatFileSize(file.size) }}</span>
+          <div class="form-group">
+            <label for="expirationDays">Expiration</label>
+
+            <select class="upload-input" id="expirationDays" formControlName="expirationDays">
+              <option [ngValue]="1">1 jour</option>
+              <option [ngValue]="2">2 jours</option>
+              <option [ngValue]="3">3 jours</option>
+              <option [ngValue]="4">4 jours</option>
+              <option [ngValue]="5">5 jours</option>
+              <option [ngValue]="6">6 jours</option>
+              <option [ngValue]="7">7 jours</option>
+            </select>
+
+            <div class="error-container">
+              @if (submitted && form['expirationDays'].errors) {
+                <div class="error-message">Veuillez choisir une durée entre 1 et 7 jours.</div>
+              }
             </div>
           </div>
-          <input #fileInput type="file" hidden (change)="changeFile($event)" />
+        </div>
+
+        <div class="button-center">
           <button
-            class="change-file-button"
-            type="button"
-            [disabled]="uploading"
-            (click)="fileInput.click()"
+            class="televerser-button"
+            type="submit"
+            [disabled]="!file || uploading || uploaded"
           >
-            changer
+            <img src="Icon.svg" alt="" width="16" height="16" />
+            televerser
           </button>
         </div>
-      }
-      <div class="form-config">
-        <div>
-          <label for="password">Mot de passe</label>
-          <input
-            id="password"
-            type="password"
-            placeholder="Optionnel"
-            formControlName="password"
-            class="upload-input"
-            autocomplete="new-password"
-          />
-          <div class="error-container"></div>
-        </div>
+        @if (message) {
+          <p role="status">{{ message }}</p>
+        }
+      </form>
+    </div>
+  </div>
+} @else {
+  <div class="upload-success">
+    <div><h2 class="success-title">Ajouter un fichier</h2></div>
 
-        <div class="form-group">
-          <label for="expirationDays">Expiration</label>
-
-          <select class="upload-input" id="expirationDays" formControlName="expirationDays">
-            <option [ngValue]="1">1 jour</option>
-            <option [ngValue]="2">2 jours</option>
-            <option [ngValue]="3">3 jours</option>
-            <option [ngValue]="4">4 jours</option>
-            <option [ngValue]="5">5 jours</option>
-            <option [ngValue]="6">6 jours</option>
-            <option [ngValue]="7">7 jours</option>
-          </select>
-
-          <div class="error-container">
-            @if (submitted && form['expirationDays'].errors) {
-              <div class="error-message">Veuillez choisir une durée entre 1 et 7 jours.</div>
-            }
+    @if (file) {
+      <div class="success-file-name">
+        <div class="success-file-name-inner">
+          <div class="success-file-logo">
+            <img class="success-logo" src="Vector.svg" alt="" width="24" height="24" />
+          </div>
+          <div class="file-name">
+            <span>{{ file.name }}</span> <span>{{ formatFileSize(file.size) }}</span>
           </div>
         </div>
       </div>
-
+      <div class="success-download">
+        <p>Félicitations, ton fichier sera conservé chez nous pendant
+          {{ uploadedExpirationDays === 7 ? 'une semaine' : uploadedExpirationDays + (uploadedExpirationDays === 1 ? ' jour' : ' jours') }} !</p>
+        @if (downloadUrl) {
+          <a class="download-link" [href]="downloadUrl">{{ downloadUrl }}</a>
+        } @else {
+          <p role="status">Le lien de téléchargement est indisponible.</p>
+        }
+      </div>
       <div class="button-center">
-        <button class="televerser-button" type="submit" [disabled]="!file || uploading || uploaded">
-          <img src="Icon.svg" alt="" width="16" height="16" />
-          televerser
+        <button class="copy-button" type="button" [disabled]="!downloadUrl" (click)="copyLink()">
+          <img src="CopyIcon.svg" alt="" width="16" height="16" />
+          Copier le lien
         </button>
       </div>
-      @if (message) {
-        <p role="status">{{ message }}</p>
+      @if (copyMessage) {
+        <p class="copy-message" role="status">{{ copyMessage }}</p>
       }
-    </form>
+    }
   </div>
-</div>
+}

@@ -26,6 +26,9 @@ export class UploadComponent {
   submitted = false;
   file = this.fileService.selectedFile;
   uploaded = false;
+  downloadUrl = '';
+  copyMessage = '';
+  uploadedExpirationDays = 7;
 
   ngOnInit(): void {
     this.uploadForm = this.formBuilder.group({
@@ -54,6 +57,8 @@ export class UploadComponent {
     this.fileService.selectedFile = file;
     this.uploaded = false;
     this.message = '';
+    this.downloadUrl = '';
+    this.copyMessage = '';
   }
 
   upload(): void {
@@ -85,7 +90,12 @@ export class UploadComponent {
         }),
       )
       .subscribe({
-        next: () => {
+        next: (response) => {
+          const token = response.objectPath?.split('/').pop();
+          this.downloadUrl = token
+            ? new URL(`download/${encodeURIComponent(token)}`, document.baseURI).href
+            : '';
+          this.uploadedExpirationDays = expirationDays;
           this.message = 'Fichier envoyé avec succès.';
           this.uploaded = true;
           this.fileService.selectedFile = null;
@@ -109,5 +119,15 @@ export class UploadComponent {
       return `${(bytes / 1024).toFixed(2)} KB`;
     }
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+  }
+
+  async copyLink(): Promise<void> {
+    if (!this.downloadUrl) return;
+    try {
+      await navigator.clipboard.writeText(this.downloadUrl);
+      this.copyMessage = 'Lien copié !';
+    } catch {
+      this.copyMessage = 'Copie impossible. Veuillez sélectionner et copier le lien manuellement.';
+    }
   }
 }
