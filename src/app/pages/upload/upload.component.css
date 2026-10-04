@@ -28,7 +28,7 @@
     width: 348px;
     height: 40px;
     gap: 16px;
-    font-family: Inter;
+    font-family: DM Sans;
     font-weight: 700;
     font-style: Bold;
     font-size: 28px;
@@ -63,7 +63,7 @@
     width: 189px;
     height: 40px;
     opacity: 1;
-    font-family: Inter;
+    font-family: DM Sans;
     font-weight: 400;
     font-style: Regular;
     font-size: 16px;
@@ -201,7 +201,7 @@
     line-height: 40px;
     letter-spacing: 0;
     text-align: center;
-    font-family: Inter;
+    font-family: DM Sans;
 }
 
 .success-file-name {

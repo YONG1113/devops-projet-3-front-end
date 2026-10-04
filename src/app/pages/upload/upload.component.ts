@@ -91,10 +91,18 @@ export class UploadComponent {
       )
       .subscribe({
         next: (response) => {
-          const token = response.objectPath?.split('/').pop();
-          this.downloadUrl = token
-            ? new URL(`download/${encodeURIComponent(token)}`, document.baseURI).href
-            : '';
+          const downloadRoute = this.router
+            .createUrlTree(['/download'], {
+              queryParams: {
+                objectPath: response.objectPath,
+                filename: response.filename,
+                size: response.size,
+                expiration: expirationDays,
+                isProtectPassword: response.isProtectPassword,
+              },
+            })
+            .toString();
+          this.downloadUrl = new URL(downloadRoute, document.baseURI).href;
           this.uploadedExpirationDays = expirationDays;
           this.message = 'Fichier envoyé avec succès.';
           this.uploaded = true;

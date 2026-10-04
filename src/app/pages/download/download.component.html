@@ -17,17 +17,19 @@
   </p>
 
   <form [formGroup]="downloadForm" (ngSubmit)="download()">
-    <div class="password-field">
-      <label for="download-password">Mot de passe</label>
-      <input
-        id="download-password"
-        type="password"
-        formControlName="password"
-        placeholder="Saisissez le mot de passe"
-        autocomplete="off"
-      />
-    </div>
-    <button class="download-button" type="submit">
+    @if (isProtectPassword) {
+      <div class="password-field">
+        <label for="download-password">Mot de passe</label>
+        <input
+          id="download-password"
+          type="password"
+          formControlName="password"
+          placeholder="Saisissez le mot de passe"
+          autocomplete="off"
+        />
+      </div>
+    }
+    <button class="download-button" type="submit" [disabled]="!objectPath || downloading">
       <svg
         width="16"
         height="16"
