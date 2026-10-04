@@ -1,0 +1,90 @@
+:host {
+    display: flex;
+    padding: 24px;
+    min-width: 0;
+}
+
+.download-card {
+    box-sizing: border-box;
+    width: 640px;
+    max-width: 100%;
+    min-height: 368px;
+    margin: auto;
+    padding: 24px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background: #fff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+}
+
+h2 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 40px;
+    text-align: center;
+}
+
+.file-details {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 56px;
+    padding: 8px;
+}
+
+.file-details img { flex-shrink: 0; }
+.file-description {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 16px;
+    line-height: 24px;
+}
+.file-size { font-size: 14px; line-height: 20px; }
+
+.expiration-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 6px 8px;
+    border: 1px solid #b2caff;
+    border-radius: 8px;
+    background: #e5edff;
+    color: #294579;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+form { display: flex; flex-direction: column; gap: 24px; }
+.password-field { display: flex; flex-direction: column; gap: 8px; }
+label { font-size: 16px; line-height: 24px; }
+input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 40px;
+    padding: 8px 16px;
+    border: 1px solid #d9d9d9;
+    border-radius: 8px;
+    font: inherit;
+    background: #fff;
+}
+.download-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 40px;
+    border: 1px solid rgba(205, 94, 20, 0.5);
+    border-radius: 8px;
+    background: rgba(255, 129, 45, 0.13);
+    color: #ba681f;
+    font: inherit;
+    cursor: pointer;
+}
+.download-message { margin: 0; font-size: 14px; }

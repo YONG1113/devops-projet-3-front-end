@@ -1,0 +1,48 @@
+<section class="download-card" aria-labelledby="download-title">
+  <h2 id="download-title">Télécharger un fichier</h2>
+
+  <div class="file-details">
+    <img src="Vector.svg" alt="" width="24" height="24" />
+    <div class="file-description">
+      <span>{{ fileName }}</span>
+      @if (fileSize) {
+        <span class="file-size">{{ fileSize }}</span>
+      }
+    </div>
+  </div>
+
+  <p class="expiration-notice">
+    <span aria-hidden="true">ⓘ</span>
+    {{ expirationMessage }}
+  </p>
+
+  <form [formGroup]="downloadForm" (ngSubmit)="download()">
+    <div class="password-field">
+      <label for="download-password">Mot de passe</label>
+      <input
+        id="download-password"
+        type="password"
+        formControlName="password"
+        placeholder="Saisissez le mot de passe"
+        autocomplete="off"
+      />
+    </div>
+    <button class="download-button" type="submit">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      ></svg>
+      Télécharger
+    </button>
+  </form>
+  @if (message) {
+    <p class="download-message" role="status">{{ message }}</p>
+  }
+</section>
