@@ -1,16 +1,20 @@
-<div class="page-shell">
-  <header class="site-header">
-    <a class="brand" routerLink="/">DataShare</a>
-    <nav aria-label="Navigation principale">
-      @if (isLoggedIn()) {
-        <button type="button" class="login-link" (click)="logout()">Mon espace</button>
-      } @else {
-        <a class="login-link" routerLink="/login">Se connecter</a>
-      }
-    </nav>
-  </header>
-  <main class="site-main">
-    <router-outlet />
-  </main>
-  <footer class="site-footer">Copyright DataShare® 2025</footer>
-</div>
+@if (showLayout()) {
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" routerLink="/">DataShare</a>
+      <nav aria-label="Navigation principale">
+        @if (isLoggedIn()) {
+          <button type="button" class="login-link" (click)="compte()">Mon espace</button>
+        } @else {
+          <a class="login-link" routerLink="/login">Se connecter</a>
+        }
+      </nav>
+    </header>
+    <main class="site-main">
+      <router-outlet />
+    </main>
+    <footer class="site-footer">Copyright DataShare® 2025</footer>
+  </div>
+} @else {
+  <router-outlet />
+}
