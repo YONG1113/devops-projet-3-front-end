@@ -94,11 +94,7 @@ export class UploadComponent {
           const downloadRoute = this.router
             .createUrlTree(['/download'], {
               queryParams: {
-                objectPath: response.objectPath,
-                filename: response.filename,
-                size: response.size,
-                expiration: expirationDays,
-                isProtectPassword: response.isProtectPassword,
+                downloadToken: response.downloadToken,
               },
             })
             .toString();

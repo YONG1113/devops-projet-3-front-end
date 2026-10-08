@@ -35,7 +35,10 @@ h2 {
     padding: 8px;
 }
 
-.file-details img { flex-shrink: 0; }
+.file-details img {
+    flex-shrink: 0;
+}
+
 .file-description {
     display: flex;
     flex-direction: column;
@@ -44,7 +47,11 @@ h2 {
     font-size: 16px;
     line-height: 24px;
 }
-.file-size { font-size: 14px; line-height: 20px; }
+
+.file-size {
+    font-size: 14px;
+    line-height: 20px;
+}
 
 .expiration-notice {
     display: flex;
@@ -60,9 +67,23 @@ h2 {
     line-height: 20px;
 }
 
-form { display: flex; flex-direction: column; gap: 24px; }
-.password-field { display: flex; flex-direction: column; gap: 8px; }
-label { font-size: 16px; line-height: 24px; }
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.password-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+label {
+    font-size: 16px;
+    line-height: 24px;
+}
+
 input {
     box-sizing: border-box;
     width: 100%;
@@ -73,6 +94,7 @@ input {
     font: inherit;
     background: #fff;
 }
+
 .download-button {
     display: flex;
     align-items: center;
@@ -87,4 +109,19 @@ input {
     font: inherit;
     cursor: pointer;
 }
-.download-message { margin: 0; font-size: 14px; }
+
+.download-message {
+    margin: 0;
+    font-size: 14px;
+}
+
+
+.error-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.error-container {
+    height: 10px;
+}

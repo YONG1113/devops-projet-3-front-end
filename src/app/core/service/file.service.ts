@@ -12,6 +12,7 @@ export interface FileUploadResponse {
   bucket: string;
   objectPath: string;
   isProtectPassword: boolean;
+  downloadToken: string;
 }
 
 @Injectable({
@@ -42,6 +43,22 @@ export class FileService {
       params: { objectPath },
       responseType: 'blob',
       observe: 'response',
+    });
+  }
+
+  downloadFileWtihToken(token: string, password: string): Observable<HttpResponse<Blob>> {
+    return this.httpClient.get('/api/file/download', {
+      params: { token, password },
+      responseType: 'blob',
+      observe: 'response',
+    });
+  }
+
+  getFileInfoByToken(token: string): Observable<FileUploadResponse> {
+    const formData = new FormData();
+    formData.append('token', token);
+    return this.httpClient.get<FileUploadResponse>('/api/file/info', {
+      params: { token },
     });
   }
 }

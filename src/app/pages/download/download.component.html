@@ -5,8 +5,8 @@
     <img src="Vector.svg" alt="" width="24" height="24" />
     <div class="file-description">
       <span>{{ fileName }}</span>
-      @if (fileSize) {
-        <span class="file-size">{{ fileSize }}</span>
+      @if (size) {
+        <span class="file-size">{{ size }}</span>
       }
     </div>
   </div>
@@ -16,7 +16,7 @@
     {{ expirationMessage }}
   </p>
 
-  <form [formGroup]="downloadForm" (ngSubmit)="download()">
+  <form [formGroup]="downloadForm" (ngSubmit)="onSubmit()">
     @if (isProtectPassword) {
       <div class="password-field">
         <label for="download-password">Mot de passe</label>
@@ -28,8 +28,13 @@
           autocomplete="off"
         />
       </div>
+      <div class="error-container">
+        @if (submitted && form['password'].errors?.['required']) {
+          <div class="error-message">Password is required</div>
+        }
+      </div>
     }
-    <button class="download-button" type="submit" [disabled]="!objectPath || downloading">
+    <button class="download-button" type="submit" [disabled]="downloading">
       <svg
         width="16"
         height="16"

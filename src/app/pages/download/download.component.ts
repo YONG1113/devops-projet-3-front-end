@@ -1,6 +1,12 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { FileService } from '../../core/service/file.service';
@@ -13,34 +19,73 @@ import { FileService } from '../../core/service/file.service';
   styleUrl: './download.component.css',
 })
 export class DownloadComponent {
+  private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private fileService = inject(FileService);
   private destroyRef = inject(DestroyRef);
 
-  objectPath = this.route.snapshot.queryParamMap.get('objectPath') ?? '';
-  fileName =
-    this.route.snapshot.queryParamMap.get('filename') ||
-    this.objectPath.split('/').pop() ||
-    'Fichier partagé';
-  expirationDays = this.route.snapshot.queryParamMap.get('expiration');
-  private size = Number(this.route.snapshot.queryParamMap.get('size'));
-  fileSize = Number.isFinite(this.size) && this.size >= 0 ? this.formatFileSize(this.size) : '';
-  expirationMessage = this.formatExpirationMessage(this.expirationDays);
-  isProtectPassword =
-    this.route.snapshot.queryParamMap.get('isProtectPassword') === 'true';
+  submitted = false;
+  fileName = '';
+  size = '';
+  downloadToken = this.route.snapshot.queryParamMap.get('downloadToken') ?? '';
+  expirationDays = '';
+  expirationMessage = '';
+  // expirationMessage = this.formatExpirationMessage(this.expirationDays);
+  isProtectPassword = false;
   message = '';
   downloading = false;
-  downloadForm = new FormGroup({ password: new FormControl('', { nonNullable: true }) });
+  downloadForm: FormGroup = new FormGroup({});
 
-  download(): void {
-    if (!this.objectPath || this.downloading) {
+  ngOnInit(): void {
+    if (!this.downloadToken || this.downloading) {
       this.message = 'Le chemin nest pas correct.';
+      return;
+    }
+    this.fileService
+      .getFileInfoByToken(this.downloadToken)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => (this.downloading = false)),
+      )
+      .subscribe({
+        next: (response) => {
+          if (!response) {
+            this.message = 'Le fichier n4a pas trouve.';
+            return;
+          }
+          this.fileName = response.filename;
+          this.size = response.size.toString();
+          this.isProtectPassword = response.isProtectPassword;
+          if (response.isProtectPassword) {
+            this.downloadForm = this.formBuilder.group({
+              password: ['', Validators.required],
+            });
+          }
+        },
+        error: (error) => {
+          if (error.status === 401) {
+            this.message = 'Veuillez vous connecter pour télécharger ce fichier.';
+          } else if (error.status === 404) {
+            this.message = 'Fichier introuvable.';
+          } else if (error.status === 410) {
+            this.message = 'Ce fichier a expiré.';
+          } else {
+            this.message = 'Le téléchargement a échoué.';
+          }
+        },
+      });
+  }
+
+  onSubmit(): void {
+    this.submitted = true;
+    if (this.downloadForm.invalid) {
+      console.log('sdfsfsf');
       return;
     }
 
     this.downloading = true;
     this.fileService
-      .downloadFile(this.objectPath)
+      .downloadFileWtihToken(this.downloadToken, this.downloadForm.get('password')?.value)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => (this.downloading = false)),
@@ -106,5 +151,9 @@ export class DownloadComponent {
     }
 
     return days === 1 ? 'Ce fichier expirera demain.' : `Ce fichier expirera dans ${days} jours.`;
+  }
+
+  get form() {
+    return this.downloadForm.controls;
   }
 }
