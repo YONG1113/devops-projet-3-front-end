@@ -17,16 +17,79 @@
   <div class="main-content">
     <div class="content-header">
       <div class="content-header-button">
-        <button>Ajouter des fichiers</button>
-        <button>
-          <img src="LogOut.svg" alt="" width="16" height="16" (click)="logout()" />Deconnexion
+        <button class="header-button">Ajouter des fichiers</button>
+        <button class="header-button" type="button" (click)="logout()">
+          <img src="LogOut.svg" alt="" width="16" height="16" />Deconnexion
         </button>
       </div>
     </div>
     <div class="content-item">
-      <h2>Mes fichier</h2>
-      <div class="item-tag"></div>
-      <div class="file-table"></div>
+      <section class="files-section">
+        <h1>Mes fichiers</h1>
+
+        <div class="file-filters" role="group" aria-label="Filtrer les fichiers">
+          <button
+            class="filter-button"
+            [class.active]="activeFilter === 'all'"
+            type="button"
+            (click)="setFilter('all')"
+          >
+            Tous
+          </button>
+          <button
+            class="filter-button"
+            [class.active]="activeFilter === 'active'"
+            type="button"
+            (click)="setFilter('active')"
+          >
+            Actifs
+          </button>
+          <button
+            class="filter-button"
+            [class.active]="activeFilter === 'expired'"
+            type="button"
+            (click)="setFilter('expired')"
+          >
+            Expirés
+          </button>
+        </div>
+
+        <ul class="file-list">
+          @for (file of filteredFiles; track file.id) {
+            <li class="file-row">
+              <div class="file-information">
+                <img class="file-icon" src="Vector.svg" alt="" width="24" height="24" />
+
+                <div class="file-text">
+                  <strong>{{ file.name }}</strong>
+                  <span>{{ file.expirationMessage }}</span>
+                </div>
+              </div>
+
+              <div class="file-actions">
+                @if (file.passwordProtected) {
+                  <span class="password-icon" aria-label="Protégé par mot de passe">🔒</span>
+                }
+
+                @if (!file.expired) {
+                  <button class="file-action-button" type="button">
+                    <img class="action-icon" src="delete.svg" alt="" width="16" height="16" />
+                    Supprimer
+                  </button>
+                  <button class="file-action-button" type="button">
+                    Accéder
+                    <img class="action-icon" src="go.svg" alt="" width="16" height="16" />
+                  </button>
+                } @else {
+                  <span class="expired-message"
+                    >Ce fichier a expiré, il n’est plus stocké chez nous</span
+                  >
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      </section>
     </div>
   </div>
 </div>
