@@ -75,15 +75,24 @@
 
               <div class="file-actions">
                 @if (file.passwordProtected) {
-                  <span class="password-icon" aria-label="Protégé par mot de passe">🔒</span>
+                  <img class="action-icon" src="lock.svg" alt="" width="16" height="16" />
                 }
 
                 @if (!file.expired) {
-                  <button class="file-action-button" type="button" (click)="accessFile(file.downloadToken)">
+                  <button
+                    class="file-action-button"
+                    type="button"
+                    [disabled]="deletingFileId !== null"
+                    (click)="deleteFile(file)"
+                  >
                     <img class="action-icon" src="delete.svg" alt="" width="16" height="16" />
-                    Supprimer
+                    {{ deletingFileId === file.id ? 'Suppression...' : 'Supprimer' }}
                   </button>
-                  <button class="file-action-button" type="button">
+                  <button
+                    class="file-action-button"
+                    type="button"
+                    (click)="accessFile(file.downloadToken)"
+                  >
                     Accéder
                     <img class="action-icon" src="go.svg" alt="" width="16" height="16" />
                   </button>

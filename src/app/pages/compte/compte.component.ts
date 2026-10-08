@@ -33,6 +33,7 @@ export class CompteComponent implements OnInit {
   files: FileItem[] = [];
   loading = false;
   errorMessage = '';
+  deletingFileId: number | null = null;
 
   ngOnInit(): void {
     this.loadFiles();
@@ -61,8 +62,31 @@ export class CompteComponent implements OnInit {
       return;
     }
     this.router.navigate(['/download'], {
-      queryParams: { token: downloadToken },
+      queryParams: { downloadToken: downloadToken },
     });
+  }
+
+  deleteFile(file: FileItem): void {
+    const confirmed = window.confirm(`Voulez-vous vraiment supprimer « ${file.name} » ?`);
+    if (!confirmed || this.deletingFileId !== null) {
+      return;
+    }
+
+    this.deletingFileId = file.id;
+    this.errorMessage = '';
+    this.fileService
+      .deleteFile(file.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.files = this.files.filter((currentFile) => currentFile.id !== file.id);
+          this.deletingFileId = null;
+        },
+        error: () => {
+          this.errorMessage = 'Impossible de supprimer ce fichier.';
+          this.deletingFileId = null;
+        },
+      });
   }
 
   private loadFiles(): void {
