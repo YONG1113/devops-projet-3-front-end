@@ -33,10 +33,15 @@
     border-right-width: 2px;
 }
 
-.sidebar-header-h1 {
+.sidebar-brand {
     margin-top: 20px;
     width: 157px;
     height: 40px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
     font-family: DM Sans;
     font-weight: 700;
     font-style: Bold;

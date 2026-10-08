@@ -1,7 +1,7 @@
 <div class="page">
   <div class="sidebar">
     <div class="sidebar-header">
-      <h1 class="sidebar-header-h1">DataShare</h1>
+      <button class="sidebar-brand" type="button" (click)="goHome()">DataShare</button>
     </div>
 
     <div class="sidebar-content">
@@ -17,7 +17,7 @@
   <div class="main-content">
     <div class="content-header">
       <div class="content-header-button">
-        <button class="header-button">Ajouter des fichiers</button>
+        <button class="header-button" type="button" (click)="goHome()">Ajouter des fichiers</button>
         <button class="header-button" type="button" (click)="logout()">
           <img src="LogOut.svg" alt="" width="16" height="16" />Deconnexion
         </button>
@@ -55,6 +55,13 @@
         </div>
 
         <ul class="file-list">
+          @if (loading) {
+            <li>Chargement des fichiers...</li>
+          } @else if (errorMessage) {
+            <li class="error-message" role="alert">{{ errorMessage }}</li>
+          } @else if (filteredFiles.length === 0) {
+            <li>Aucun fichier à afficher.</li>
+          }
           @for (file of filteredFiles; track file.id) {
             <li class="file-row">
               <div class="file-information">
@@ -72,7 +79,7 @@
                 }
 
                 @if (!file.expired) {
-                  <button class="file-action-button" type="button">
+                  <button class="file-action-button" type="button" (click)="accessFile(file.downloadToken)">
                     <img class="action-icon" src="delete.svg" alt="" width="16" height="16" />
                     Supprimer
                   </button>

@@ -1,6 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { UserService } from '../../core/service/user.service';
 import { Router } from '@angular/router';
+import { FileService, UserFile } from '../../core/service/file.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 type FileFilter = 'all' | 'active' | 'expired';
 
@@ -10,6 +12,8 @@ interface FileItem {
   expirationMessage: string;
   passwordProtected: boolean;
   expired: boolean;
+  objectPath: string;
+  downloadToken: string;
 }
 
 @Component({
@@ -18,35 +22,21 @@ interface FileItem {
   templateUrl: './compte.component.html',
   styleUrl: './compte.component.css',
 })
-export class CompteComponent {
+export class CompteComponent implements OnInit {
   private userService = inject(UserService);
+  private fileService = inject(FileService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   activeFilter: FileFilter = 'all';
 
-  readonly files: FileItem[] = [
-    {
-      id: 1,
-      name: 'test1.jpg',
-      expirationMessage: 'Expire dans 2 jours',
-      passwordProtected: true,
-      expired: false,
-    },
-    {
-      id: 2,
-      name: 'test.mp3',
-      expirationMessage: 'Expire demain',
-      passwordProtected: false,
-      expired: false,
-    },
-    {
-      id: 3,
-      name: 'test.mp4',
-      expirationMessage: 'Expiré',
-      passwordProtected: false,
-      expired: true,
-    },
-  ];
+  files: FileItem[] = [];
+  loading = false;
+  errorMessage = '';
+
+  ngOnInit(): void {
+    this.loadFiles();
+  }
 
   get filteredFiles(): FileItem[] {
     if (this.activeFilter === 'active') {
@@ -60,6 +50,63 @@ export class CompteComponent {
 
   setFilter(filter: FileFilter): void {
     this.activeFilter = filter;
+  }
+
+  goHome(): void {
+    this.router.navigate(['/']);
+  }
+
+  accessFile(downloadToken: string): void {
+    if (!downloadToken) {
+      return;
+    }
+    this.router.navigate(['/download'], {
+      queryParams: { token: downloadToken },
+    });
+  }
+
+  private loadFiles(): void {
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.fileService
+      .getAllFilesByUser()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (files) => {
+          this.files = files.map((file) => this.toFileItem(file));
+          this.loading = false;
+        },
+        error: () => {
+          this.errorMessage = 'Impossible de charger vos fichiers.';
+          this.loading = false;
+        },
+      });
+  }
+
+  private toFileItem(file: UserFile): FileItem {
+    const expiresAt = new Date(file.expiresAt);
+    const expired = Number.isNaN(expiresAt.getTime()) || expiresAt.getTime() <= Date.now();
+
+    return {
+      id: file.id,
+      name: file.filename,
+      expirationMessage: this.formatExpiration(expiresAt, expired),
+      passwordProtected: file.isProtectPassword,
+      expired,
+      objectPath: file.objectPath,
+      downloadToken: file.downloadToken,
+    };
+  }
+
+  private formatExpiration(expiresAt: Date, expired: boolean): string {
+    if (expired) {
+      return 'Expiré';
+    }
+
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    const remainingDays = Math.ceil((expiresAt.getTime() - Date.now()) / millisecondsPerDay);
+    return remainingDays === 1 ? 'Expire demain' : `Expire dans ${remainingDays} jours`;
   }
 
   logout(): void {

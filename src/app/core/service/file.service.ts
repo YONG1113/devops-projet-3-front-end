@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 export interface FileUploadResponse {
   filename: string;
@@ -11,6 +11,17 @@ export interface FileUploadResponse {
   userId: number;
   bucket: string;
   objectPath: string;
+  isProtectPassword: boolean;
+  downloadToken: string;
+}
+
+export interface UserFile {
+  id: number;
+  filename: string;
+  size: number;
+  contentType: string;
+  objectPath: string;
+  expiresAt: string;
   isProtectPassword: boolean;
   downloadToken: string;
 }
@@ -60,5 +71,31 @@ export class FileService {
     return this.httpClient.get<FileUploadResponse>('/api/file/info', {
       params: { token },
     });
+  }
+
+  getAllFilesByUser(): Observable<UserFile[]> {
+    return of([
+      {
+        id: 1,
+        filename: 'test1.jpg',
+        size: 333,
+        contentType: 'string',
+        objectPath: 'string',
+        expiresAt: 'string',
+        isProtectPassword: true,
+        downloadToken: 'string',
+      },
+      {
+        id: 1,
+        filename: 'test1.jpg',
+        size: 333,
+        contentType: 'string',
+        objectPath: 'string',
+        expiresAt: 'string',
+        isProtectPassword: true,
+        downloadToken: 'string',
+      },
+    ]);
+    return this.httpClient.get<UserFile[]>('/api/files');
   }
 }
