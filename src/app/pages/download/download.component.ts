@@ -10,6 +10,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { FileService } from '../../core/service/file.service';
+import { getRemainingCalendarDays } from '../../core/utils/file-expiration';
+
+type ExpirationState = 'expired' | 'today' | 'tomorrow' | 'active';
 
 @Component({
   selector: 'app-download',
@@ -28,9 +31,8 @@ export class DownloadComponent {
   fileName = '';
   size = '';
   downloadToken = this.route.snapshot.queryParamMap.get('downloadToken') ?? '';
-  expirationDays = '';
+  expirationState: ExpirationState = 'expired';
   expirationMessage = '';
-  // expirationMessage = this.formatExpirationMessage(this.expirationDays);
   isProtectPassword = false;
   message = '';
   downloading = false;
@@ -56,6 +58,7 @@ export class DownloadComponent {
           this.fileName = response.filename;
           this.size = response.size.toString();
           this.isProtectPassword = response.isProtectPassword;
+          this.expirationMessage = this.formatExpirationMessage(response.expiresAt);
           if (response.isProtectPassword) {
             this.downloadForm = this.formBuilder.group({
               password: ['', Validators.required],
@@ -113,6 +116,9 @@ export class DownloadComponent {
           } else if (error.status === 404) {
             this.message = 'Fichier introuvable.';
           } else if (error.status === 410) {
+            this.expirationState = 'expired';
+            this.expirationMessage =
+              "Ce fichier n'est plus disponible en téléchargement car il a expiré.";
             this.message = 'Ce fichier a expiré.';
           } else {
             this.message = 'Le téléchargement a échoué.';
@@ -143,14 +149,37 @@ export class DownloadComponent {
     return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   }
 
-  formatExpirationMessage(expirationDays: string | null): string {
-    const days = Number(expirationDays);
+  formatExpirationMessage(expiresAt: string | null): string {
+    const expiredMessage = "Ce fichier n'est plus disponible en téléchargement car il a expiré.";
 
-    if (!Number.isInteger(days) || days < 1) {
+    if (!expiresAt) {
+      this.expirationState = 'expired';
+      return expiredMessage;
+    }
+
+    const days = getRemainingCalendarDays(expiresAt);
+    if (days === null) {
+      this.expirationState = 'expired';
       return "La date d'expiration de ce fichier n'est pas disponible.";
     }
 
-    return days === 1 ? 'Ce fichier expirera demain.' : `Ce fichier expirera dans ${days} jours.`;
+    switch (true) {
+      case days < 0:
+        this.expirationState = 'expired';
+        return expiredMessage;
+
+      case days === 0:
+        this.expirationState = 'today';
+        return "Ce fichier expirera aujourd'hui.";
+
+      case days === 1:
+        this.expirationState = 'tomorrow';
+        return 'Ce fichier expirera demain.';
+
+      default:
+        this.expirationState = 'active';
+        return `Ce fichier expirera dans ${days} jours.`;
+    }
   }
 
   get form() {

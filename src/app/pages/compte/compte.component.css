@@ -175,13 +175,13 @@
     padding: 8px 18px;
     border: 0;
     background: transparent;
-    color: #080808;
+    /* color: #080808; */
     font: inherit;
     cursor: pointer;
 }
 
 .filter-button.active {
-    background: #DE6262;
+    background: rgba(231, 122, 110, 1);
     color: #FFFFFF;
 }
 
@@ -258,12 +258,13 @@
     border-radius: 8px;
     background: rgba(255, 129, 45, 0.13);
     color: #E27F29;
-    font: inherit;
+    font: DM Sans;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    font-size: 16px;
 }
 
 .action-icon {

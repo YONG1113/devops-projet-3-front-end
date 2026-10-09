@@ -53,18 +53,51 @@ h2 {
     line-height: 20px;
 }
 
-.expiration-notice {
+.expiration-notice.active {
     display: flex;
     align-items: center;
     gap: 8px;
     margin: 0;
     padding: 6px 8px;
-    border: 1px solid #b2caff;
     border-radius: 8px;
-    background: #e5edff;
-    color: #294579;
     font-size: 14px;
     line-height: 20px;
+
+    background: #e5edff;
+    color: #294579;
+    border: 1px solid #b2caff;
+}
+
+.expiration-notice.tomorrow,
+.expiration-notice.today {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 20px;
+
+    background: rgba(255, 245, 237, 1);
+    color: rgba(170, 100, 43, 1);
+    border: 1px solid rgba(230, 203, 181, 1);
+}
+
+.expiration-notice.expired {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 6px 8px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 20px;
+
+
+    color: rgba(156, 51, 51, 1);
+    background: rgba(255, 226, 226, 1);
+    border: 1px solid rgba(232, 166, 166, 1)
 }
 
 form {

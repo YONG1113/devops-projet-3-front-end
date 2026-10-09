@@ -15,6 +15,20 @@ export interface FileUploadResponse {
   downloadToken: string;
 }
 
+export interface FileDownloadResponse {
+  filename: string;
+  size: number;
+  contentType: string;
+  status: string;
+  id: number;
+  userId: number;
+  bucket: string;
+  objectPath: string;
+  isProtectPassword: boolean;
+  downloadToken: string;
+  expiresAt: string;
+}
+
 export interface UserFile {
   id: number;
   filename: string;
@@ -65,10 +79,10 @@ export class FileService {
     });
   }
 
-  getFileInfoByToken(token: string): Observable<FileUploadResponse> {
+  getFileInfoByToken(token: string): Observable<FileDownloadResponse> {
     const formData = new FormData();
     formData.append('token', token);
-    return this.httpClient.get<FileUploadResponse>('/api/file/info', {
+    return this.httpClient.get<FileDownloadResponse>('/api/file/info', {
       params: { token },
     });
   }

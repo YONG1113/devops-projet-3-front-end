@@ -11,8 +11,25 @@
     </div>
   </div>
 
-  <p class="expiration-notice">
-    <span aria-hidden="true">ⓘ</span>
+  <p class="expiration-notice" [class]="expirationState">
+    @switch (expirationState) {
+      @case ('expired') {
+        <img src="danger.svg" alt="" width="16" height="16" />
+      }
+
+      @case ('tomorrow') {
+        <img src="alert.svg" alt="" width="16" height="16" />
+      }
+
+      @case ('today') {
+        <img src="alert.svg" alt="" width="16" height="16" />
+      }
+
+      @case ('active') {
+        <img src="info.svg" alt="" width="16" height="16" />
+      }
+    }
+
     {{ expirationMessage }}
   </p>
 
@@ -35,17 +52,7 @@
       </div>
     }
     <button class="download-button" type="submit" [disabled]="downloading">
-      <svg
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.7"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      ></svg>
+      <img src="download.svg" alt="" width="16" height="16" />
       Télécharger
     </button>
   </form>

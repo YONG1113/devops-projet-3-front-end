@@ -3,6 +3,7 @@ import { UserService } from '../../core/service/user.service';
 import { Router } from '@angular/router';
 import { FileService, UserFile } from '../../core/service/file.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { getRemainingCalendarDays } from '../../core/utils/file-expiration';
 
 type FileFilter = 'all' | 'active' | 'expired';
 
@@ -109,13 +110,13 @@ export class CompteComponent implements OnInit {
   }
 
   private toFileItem(file: UserFile): FileItem {
-    const expiresAt = new Date(file.expiresAt);
-    const expired = Number.isNaN(expiresAt.getTime()) || expiresAt.getTime() <= Date.now();
+    const remainingDays = getRemainingCalendarDays(file.expiresAt);
+    const expired = remainingDays === null || remainingDays < 0;
 
     return {
       id: file.id,
       name: file.filename,
-      expirationMessage: this.formatExpiration(expiresAt, expired),
+      expirationMessage: this.formatExpiration(remainingDays),
       passwordProtected: file.isProtectPassword,
       expired,
       objectPath: file.objectPath,
@@ -123,14 +124,17 @@ export class CompteComponent implements OnInit {
     };
   }
 
-  private formatExpiration(expiresAt: Date, expired: boolean): string {
-    if (expired) {
-      return 'Expiré';
+  private formatExpiration(remainingDays: number | null): string {
+    switch (true) {
+      case remainingDays === null || remainingDays < 0:
+        return 'Expiré';
+      case remainingDays === 0:
+        return "Expire aujourd'hui";
+      case remainingDays === 1:
+        return 'Expire demain';
+      default:
+        return `Expire dans ${remainingDays} jours`;
     }
-
-    const millisecondsPerDay = 24 * 60 * 60 * 1000;
-    const remainingDays = Math.ceil((expiresAt.getTime() - Date.now()) / millisecondsPerDay);
-    return remainingDays === 1 ? 'Expire demain' : `Expire dans ${remainingDays} jours`;
   }
 
   logout(): void {
