@@ -23,6 +23,7 @@ describe('LoginComponent', () => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    jest.spyOn(window, 'alert').mockImplementation(() => undefined);
   });
 
   afterEach(() => {

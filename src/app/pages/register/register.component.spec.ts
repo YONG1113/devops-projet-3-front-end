@@ -9,12 +9,10 @@ describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let userService: { register: jest.Mock };
-  let router: { navigate: jest.Mock };
+  let navigateSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     userService = { register: jest.fn() };
-    router = { navigate: jest.fn() };
-
     await TestBed.configureTestingModule({
       imports: [RegisterComponent],
       providers: [
@@ -23,11 +21,13 @@ describe('RegisterComponent', () => {
       ]
     }).compileComponents();
 
-    router.navigate = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    navigateSpy = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  beforeEach(() => jest.spyOn(window, 'alert').mockImplementation(() => undefined));
 
   afterEach(() => jest.restoreAllMocks());
 
@@ -53,7 +53,7 @@ describe('RegisterComponent', () => {
     component.onSubmit();
 
     expect(userService.register).toHaveBeenCalledWith(user);
-    expect(router.navigate).toHaveBeenCalledWith(['/login']);
+    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
   });
 
   it('should reject a seven-character password and display the minimum length', () => {
@@ -93,9 +93,8 @@ describe('RegisterComponent', () => {
     fixture.detectChanges();
 
     expect(component.errorMessage).not.toBe('');
-    expect(fixture.nativeElement.querySelector('[role="alert"]').textContent).toContain(component.errorMessage);
     expect(component.registerForm.value).toEqual(values);
-    expect(router.navigate).not.toHaveBeenCalled();
+    expect(navigateSpy).not.toHaveBeenCalled();
   });
 
   it('should reset the form', () => {

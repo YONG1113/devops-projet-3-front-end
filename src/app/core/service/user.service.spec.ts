@@ -34,8 +34,6 @@ describe('UserService', () => {
 
   it('should register a user', () => {
     const user: Register = {
-      firstName: 'John',
-      lastName: 'Doe',
       login: 'john.doe',
       password: 'password'
     };
@@ -73,5 +71,12 @@ describe('UserService', () => {
     service.logout();
 
     expect(localStorage.getItem('token')).toBeNull();
+  });
+
+  it('should get the current user', () => {
+    service.getCurrentUser().subscribe(user => expect(user).toEqual({ id: '4' }));
+    const request = httpTestingController.expectOne('/api/me');
+    expect(request.request.method).toBe('GET');
+    request.flush({ id: '4' });
   });
 });

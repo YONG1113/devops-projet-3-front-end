@@ -29,10 +29,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'etudiant-frontend' title`, () => {
+  it(`should have the 'DataShare' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('etudiant-frontend');
+    expect(app.title).toEqual('DataShare');
   });
 
   it('should identify a logged-in user when a token exists', () => {
@@ -48,14 +48,19 @@ describe('AppComponent', () => {
     expect(fixture.componentInstance.isLoggedIn()).toBe(false);
   });
 
-  it('should logout and navigate to the login page', () => {
+  it('should navigate to the account page', () => {
     const router = TestBed.inject(Router);
     const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
     const fixture = TestBed.createComponent(AppComponent);
 
-    fixture.componentInstance.logout();
+    fixture.componentInstance.compte();
+    expect(navigateSpy).toHaveBeenCalledWith(['/compte']);
+  });
 
-    expect(userService.logout).toHaveBeenCalled();
-    expect(navigateSpy).toHaveBeenCalledWith(['/login']);
+  it('should hide the shared layout on account routes', () => {
+    const router = TestBed.inject(Router);
+    jest.spyOn(router, 'url', 'get').mockReturnValue('/compte');
+    const fixture = TestBed.createComponent(AppComponent);
+    expect(fixture.componentInstance.showLayout()).toBe(false);
   });
 });

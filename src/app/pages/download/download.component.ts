@@ -52,7 +52,6 @@ export class DownloadComponent {
       .subscribe({
         next: (response) => {
           if (!response) {
-            this.message = 'Le fichier n4a pas trouve.';
             return;
           }
           this.fileName = response.filename;
@@ -71,6 +70,9 @@ export class DownloadComponent {
           } else if (error.status === 404) {
             this.message = 'Fichier introuvable.';
           } else if (error.status === 410) {
+            this.expirationState = 'expired';
+            this.expirationMessage =
+              "Ce fichier n'est plus disponible en téléchargement car il a expiré.";
             this.message = 'Ce fichier a expiré.';
           } else {
             this.message = 'Le téléchargement a échoué.';
@@ -82,7 +84,6 @@ export class DownloadComponent {
   onSubmit(): void {
     this.submitted = true;
     if (this.downloadForm.invalid) {
-      console.log('sdfsfsf');
       return;
     }
 
@@ -116,9 +117,6 @@ export class DownloadComponent {
           } else if (error.status === 404) {
             this.message = 'Fichier introuvable.';
           } else if (error.status === 410) {
-            this.expirationState = 'expired';
-            this.expirationMessage =
-              "Ce fichier n'est plus disponible en téléchargement car il a expiré.";
             this.message = 'Ce fichier a expiré.';
           } else {
             this.message = 'Le téléchargement a échoué.';
