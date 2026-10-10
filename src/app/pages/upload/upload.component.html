@@ -1,6 +1,6 @@
 @if (!uploaded) {
   <div class="card">
-    <div><h2 class="card-header">ajouter un fichier</h2></div>
+    <div><h2 class="card-header">Ajouter un fichier</h2></div>
     <div class="card-body">
       <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()">
         @if (file) {
@@ -19,7 +19,7 @@
               [disabled]="uploading"
               (click)="fileInput.click()"
             >
-              changer
+              Changer
             </button>
           </div>
         }
@@ -41,7 +41,7 @@
             <label for="expirationDays">Expiration</label>
 
             <select class="upload-input" id="expirationDays" formControlName="expirationDays">
-              <option [ngValue]="1">1 jour</option>
+              <option [ngValue]="1">Une journée</option>
               <option [ngValue]="2">2 jours</option>
               <option [ngValue]="3">3 jours</option>
               <option [ngValue]="4">4 jours</option>
@@ -65,7 +65,7 @@
             [disabled]="!file || uploading || uploaded"
           >
             <img src="Icon.svg" alt="" width="16" height="16" />
-            televerser
+            Téléverser
           </button>
         </div>
         @if (message) {

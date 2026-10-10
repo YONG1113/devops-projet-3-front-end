@@ -7,6 +7,7 @@ import { finalize, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../shared/material.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { validateSelectedFile } from '../../core/utils/file-validation';
 
 @Component({
   selector: 'app-upload',
@@ -53,6 +54,13 @@ export class UploadComponent {
     const file = input.files?.[0];
     input.value = '';
     if (!file || this.uploading) return;
+
+    const validationError = validateSelectedFile(file);
+    if (validationError) {
+      this.message = validationError;
+      return;
+    }
+
     this.file = file;
     this.fileService.selectedFile = file;
     this.uploaded = false;
@@ -68,6 +76,12 @@ export class UploadComponent {
     }
     const file = this.file;
     if (!file || this.uploading || this.uploaded) {
+      return;
+    }
+
+    const validationError = validateSelectedFile(file);
+    if (validationError) {
+      this.message = validationError;
       return;
     }
 

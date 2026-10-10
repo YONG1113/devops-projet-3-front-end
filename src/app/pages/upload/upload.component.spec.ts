@@ -96,6 +96,21 @@ describe('UploadComponent', () => {
     expect(component.uploaded).toBe(false);
   });
 
+  it('rejects a forbidden replacement file', () => {
+    const forbidden = new File(['content'], 'virus.exe');
+    component.changeFile({ target: { files: [forbidden], value: 'x' } } as unknown as Event);
+    expect(component.file).toBe(file);
+    expect(component.message).toContain('ne sont pas autorisés');
+  });
+
+  it('validates the file again before sending it', () => {
+    localStorage.setItem('token', 'jwt');
+    component.file = new File(['content'], 'script.bat');
+    component.upload();
+    expect(component.message).toContain('ne sont pas autorisés');
+    expect(userService.getCurrentUser).not.toHaveBeenCalled();
+  });
+
   it.each([[10, '10 B'], [2048, '2.00 KB'], [2 * 1024 * 1024, '2.00 MB']])(
     'formats %s bytes as %s', (bytes, expected) => expect(component.formatFileSize(bytes as number)).toBe(expected),
   );

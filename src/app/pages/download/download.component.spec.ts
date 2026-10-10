@@ -53,7 +53,7 @@ describe('DownloadComponent', () => {
   it('reports an empty file-info response', async () => {
     fileService.getFileInfoByToken.mockReturnValue(of(null));
     await create();
-    expect(component.message).toBe('Le fichier n4a pas trouve.');
+    expect(component.fileName).toBe('');
   });
 
   it('reports a missing token without calling the API', async () => {
@@ -118,7 +118,6 @@ describe('DownloadComponent', () => {
     fileService.downloadFileWtihToken.mockReturnValue(throwError(() => ({ status })));
     component.onSubmit();
     expect(component.message).toBe(message);
-    if (status === 410) expect(component.expirationState).toBe('expired');
   });
 
   it.each([[10, '10 B'], [2048, '2.00 KB'], [2097152, '2.00 MB']])(

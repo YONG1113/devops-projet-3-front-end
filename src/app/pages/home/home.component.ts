@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FileService } from '../../core/service/file.service';
 import { Router } from '@angular/router';
+import { validateSelectedFile } from '../../core/utils/file-validation';
 
 @Component({
   selector: 'app-home',
@@ -11,6 +12,7 @@ import { Router } from '@angular/router';
 export class HomeComponent {
   private fileService = inject(FileService);
   private router = inject(Router);
+  message = '';
 
   chooseFile(input: HTMLInputElement): void {
     if (!localStorage.getItem('token')) {
@@ -26,6 +28,13 @@ export class HomeComponent {
     input.value = '';
     if (!file) return;
 
+    const validationError = validateSelectedFile(file);
+    if (validationError) {
+      this.message = validationError;
+      return;
+    }
+
+    this.message = '';
     this.fileService.selectedFile = file;
     this.router.navigate(['/upload']);
   }

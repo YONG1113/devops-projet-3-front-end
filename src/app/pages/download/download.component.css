@@ -143,6 +143,13 @@ input {
     cursor: pointer;
 }
 
+.download-button:disabled {
+    border-color: #ded9d5;
+    background: #f0edeb;
+    color: #b9b0a9;
+    cursor: not-allowed;
+}
+
 .download-message {
     margin: 0;
     font-size: 14px;
@@ -157,4 +164,90 @@ input {
 
 .error-container {
     height: 10px;
+}
+
+@media (max-width: 600px) {
+    :host {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        padding: 27px;
+        align-items: center;
+    }
+
+    .download-card {
+        width: 100%;
+        max-width: 390px;
+        min-height: 416px;
+        margin: auto;
+        padding: 28px;
+        gap: 24px;
+        border-radius: 16px;
+    }
+
+    h2 {
+        font-size: 32px;
+        line-height: 40px;
+        white-space: nowrap;
+    }
+
+    .file-details {
+        width: 100%;
+        min-height: 56px;
+        padding: 8px;
+    }
+
+    .file-description {
+        flex: 1;
+        width: 0;
+    }
+
+    .file-description > span:first-child {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .expiration-notice {
+        width: 100%;
+        min-height: 36px;
+    }
+
+    form {
+        width: 100%;
+        gap: 16px;
+    }
+
+    label {
+        font-size: 18px;
+    }
+
+    input {
+        height: 46px;
+        font-size: 16px;
+    }
+
+    .error-container {
+        height: 4px;
+    }
+
+    .download-button {
+        height: 46px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 400px) {
+    :host {
+        padding-inline: 16px;
+    }
+
+    .download-card {
+        padding-inline: 20px;
+    }
+
+    h2 {
+        font-size: 28px;
+    }
 }

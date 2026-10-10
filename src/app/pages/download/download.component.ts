@@ -55,7 +55,7 @@ export class DownloadComponent {
             return;
           }
           this.fileName = response.filename;
-          this.size = response.size.toString();
+          this.size = response.size != null ? response.size.toString() : '';
           this.isProtectPassword = response.isProtectPassword;
           this.expirationMessage = this.formatExpirationMessage(response.expiresAt);
           if (response.isProtectPassword) {

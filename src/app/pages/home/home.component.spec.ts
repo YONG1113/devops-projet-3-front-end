@@ -53,4 +53,22 @@ describe('HomeComponent', () => {
     expect(fileService.selectedFile).toBeNull();
     expect(router.navigate).not.toHaveBeenCalled();
   });
+
+  it.each(['virus.exe', 'script.BAT'])('rejects the forbidden file %s', (name) => {
+    const file = new File(['content'], name);
+    const input = { files: [file], value: 'selected' } as unknown as HTMLInputElement;
+    component.upload({ target: input } as unknown as Event);
+    expect(component.message).toContain('ne sont pas autorisés');
+    expect(fileService.selectedFile).toBeNull();
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
+
+  it('rejects a file larger than 1 GiB', () => {
+    const file = new File(['content'], 'large.zip');
+    Object.defineProperty(file, 'size', { value: 1024 * 1024 * 1024 + 1 });
+    const input = { files: [file], value: 'selected' } as unknown as HTMLInputElement;
+    component.upload({ target: input } as unknown as Event);
+    expect(component.message).toBe('La taille maximale autorisée est de 1 Go.');
+    expect(router.navigate).not.toHaveBeenCalled();
+  });
 });

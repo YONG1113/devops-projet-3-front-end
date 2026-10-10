@@ -9,4 +9,7 @@
   >
     <img class="upload-image" src="Frame3.svg" alt="" />
   </button>
+  @if (message) {
+    <p class="error-message" role="alert">{{ message }}</p>
+  }
 </div>
