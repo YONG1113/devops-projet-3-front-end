@@ -35,6 +35,7 @@ export class CompteComponent implements OnInit {
   loading = false;
   errorMessage = '';
   deletingFileId: number | null = null;
+  menuOpen = false;
 
   ngOnInit(): void {
     this.loadFiles();
@@ -52,6 +53,20 @@ export class CompteComponent implements OnInit {
 
   setFilter(filter: FileFilter): void {
     this.activeFilter = filter;
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
+  showAllFiles(): void {
+    this.activeFilter = 'all';
+    this.closeMenu();
+    document.getElementById('files-section')?.scrollIntoView({ behavior: 'smooth' });
   }
 
   goHome(): void {

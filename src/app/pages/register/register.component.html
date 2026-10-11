@@ -3,7 +3,7 @@
   <div class="card-body">
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="login">Email</label>
         <input
           id="login"
           type="email"
@@ -24,7 +24,7 @@
       </div>
 
       <div class="form-group">
-        <label for="password">votre mot de passe</label>
+        <label for="password">Mot de passe</label>
         <input
           id="password"
           type="password"
@@ -45,11 +45,11 @@
       </div>
 
       <div class="form-group">
-        <label for="repassword">Verification du mot de passe</label>
+        <label for="repassword">Vérification du mot de passe</label>
         <input
           id="repassword"
           type="password"
-          placeholder="Saisissez le a nouveau"
+          placeholder="Saisissez-le à nouveau"
           formControlName="repassword"
           class="login-input"
           autocomplete="current-password"
@@ -69,8 +69,8 @@
       </div>
 
       <div class="button-center">
-        <a class="login-button" routerLink="/login">Jai deja un compte</a>
-        <button class="login-button" type="submit">Creer mon compte</button>
+        <a class="login-button" routerLink="/login">J'ai déjà un compte</a>
+        <button class="login-button" type="submit">Créer mon compte</button>
       </div>
     </form>
   </div>

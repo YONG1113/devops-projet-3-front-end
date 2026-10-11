@@ -54,6 +54,27 @@ describe('CompteComponent', () => {
     expect(component.filteredFiles).toHaveLength(2);
   });
 
+  it('opens and closes the mobile menu', () => {
+    expect(component.menuOpen).toBe(false);
+    component.toggleMenu();
+    expect(component.menuOpen).toBe(true);
+    component.closeMenu();
+    expect(component.menuOpen).toBe(false);
+  });
+
+  it('shows all files and closes the mobile menu', () => {
+    component.setFilter('expired');
+    component.menuOpen = true;
+    const scrollIntoView = jest.fn();
+    jest.spyOn(document, 'getElementById').mockReturnValue({ scrollIntoView } as unknown as HTMLElement);
+
+    component.showAllFiles();
+
+    expect(component.activeFilter).toBe('all');
+    expect(component.menuOpen).toBe(false);
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
+  });
+
   it('navigates home and to a download token', () => {
     component.goHome();
     component.accessFile('active-token');

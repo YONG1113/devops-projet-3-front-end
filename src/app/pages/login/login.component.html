@@ -3,7 +3,7 @@
   <div class="card-body">
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
-        <label for="email">Email</label>
+        <label for="login">Email</label>
         <input
           id="login"
           type="email"
@@ -24,7 +24,7 @@
       </div>
 
       <div class="form-group">
-        <label for="password">votre mot de passe</label>
+        <label for="password">Mot de passe</label>
         <input
           id="password"
           type="password"
@@ -43,7 +43,7 @@
 
       <div class="button-center">
         <a class="login-button" routerLink="/register">Créer un compte</a>
-        <button class="login-button" type="submit">connexion</button>
+        <button class="login-button" type="submit">Connexion</button>
       </div>
     </form>
   </div>

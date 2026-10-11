@@ -1,20 +1,38 @@
 <div class="page">
-  <div class="sidebar">
+  <button
+    class="drawer-backdrop"
+    [class.visible]="menuOpen"
+    type="button"
+    aria-label="Fermer le menu"
+    (click)="closeMenu()"
+  ></button>
+
+  <aside class="sidebar" [class.open]="menuOpen" aria-label="Menu du compte">
     <div class="sidebar-header">
+      <button class="drawer-close" type="button" aria-label="Fermer le menu" (click)="closeMenu()">
+        ×
+      </button>
       <button class="sidebar-brand" type="button" (click)="goHome()">DataShare</button>
     </div>
 
     <div class="sidebar-content">
-      <div class="menu-item">
-        <span>Mes fichiers</span>
-      </div>
+      <button class="menu-item" type="button" (click)="showAllFiles()">Mes fichiers</button>
     </div>
     <div class="sidebar-footer">
       <span>Copyright DataShare© 2025</span>
     </div>
-  </div>
+  </aside>
 
   <div class="main-content">
+    <header class="mobile-account-header">
+      <button class="menu-toggle" type="button" aria-label="Ouvrir le menu" (click)="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="mobile-account">
+        <span class="account-avatar" aria-hidden="true"><img src="Shape.svg" alt="" /></span>
+        <span>Mon compte</span>
+      </div>
+    </header>
     <div class="content-header">
       <div class="content-header-button">
         <button class="header-button" type="button" (click)="goHome()">Ajouter des fichiers</button>
@@ -24,7 +42,7 @@
       </div>
     </div>
     <div class="content-item">
-      <section class="files-section">
+      <section id="files-section" class="files-section">
         <h1>Mes fichiers</h1>
 
         <div class="file-filters" role="group" aria-label="Filtrer les fichiers">
@@ -80,7 +98,7 @@
 
                 @if (!file.expired) {
                   <button
-                    class="file-action-button"
+                    class="file-action-button desktop-file-action"
                     type="button"
                     [disabled]="deletingFileId !== null"
                     (click)="deleteFile(file)"
@@ -89,12 +107,20 @@
                     {{ deletingFileId === file.id ? 'Suppression...' : 'Supprimer' }}
                   </button>
                   <button
-                    class="file-action-button"
+                    class="file-action-button desktop-file-action"
                     type="button"
                     (click)="accessFile(file.downloadToken)"
                   >
                     Accéder
                     <img class="action-icon" src="go.svg" alt="" width="16" height="16" />
+                  </button>
+                  <button
+                    class="mobile-file-action"
+                    type="button"
+                    aria-label="Accéder au fichier"
+                    (click)="accessFile(file.downloadToken)"
+                  >
+                    ⋮
                   </button>
                 } @else {
                   <span class="expired-message"
