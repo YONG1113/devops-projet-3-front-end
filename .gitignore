@@ -44,6 +44,7 @@ Thumbs.db
 # Cypress artifacts
 /cypress/screenshots
 /cypress/videos
+/cypress/downloads
 
 # Local E2E database credentials
 .env.e2e
