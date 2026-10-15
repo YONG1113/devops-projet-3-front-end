@@ -43,13 +43,15 @@ describe('File lifecycle with the fixed E2E account', () => {
     cy.contains(filename).should('be.visible');
 
     cy.intercept('POST', '/api/file').as('uploadFile');
-    cy.get('#expirationDays').select('3');
-    cy.contains('button', /^Téléverser$/).click();
+    cy.get('#expirationDays').select('3 jours');
+    cy.get('button.televerser-button').should('be.enabled').click();
     cy.wait('@uploadFile').then(({ response }) => {
       expect(response?.statusCode).to.eq(200);
       expect(response?.body.filename).to.eq(filename);
     });
-    cy.contains('Fichier envoyé avec succès.').should('be.visible');
+    cy.get('.upload-success').should('be.visible');
+    cy.contains('Félicitations, ton fichier sera conservé chez nous pendant 3 jours !')
+      .should('be.visible');
     cy.get('.download-link').should('have.attr', 'href').then((href) => {
       expect(href).to.include('/download');
     });
@@ -70,7 +72,7 @@ describe('File lifecycle with the fixed E2E account', () => {
     cy.contains(filename).should('be.visible');
 
     cy.intercept('GET', '/api/file/download*').as('downloadFile');
-    cy.contains('button', /^Télécharger$/).click();
+    cy.get('button.download-button').should('be.enabled').click();
     cy.wait('@downloadFile').its('response.statusCode').should('eq', 200);
     cy.contains('Téléchargement terminé.').should('be.visible');
     cy.readFile(`cypress/downloads/${filename}`).should('eq', fileContent);
