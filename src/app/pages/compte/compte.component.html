@@ -109,7 +109,7 @@
                   <button
                     class="file-action-button desktop-file-action"
                     type="button"
-                    (click)="accessFile(file.downloadToken)"
+                    (click)="accessFile(file.id)"
                   >
                     Accéder
                     <img class="action-icon" src="go.svg" alt="" width="16" height="16" />
@@ -118,7 +118,7 @@
                     class="mobile-file-action"
                     type="button"
                     aria-label="Accéder au fichier"
-                    (click)="accessFile(file.downloadToken)"
+                    (click)="accessFile(file.id)"
                   >
                     ⋮
                   </button>

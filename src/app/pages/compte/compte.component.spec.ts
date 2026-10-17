@@ -75,15 +75,15 @@ describe('CompteComponent', () => {
     expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth' });
   });
 
-  it('navigates home and to a download token', () => {
+  it('navigates home and to a file id', () => {
     component.goHome();
-    component.accessFile('active-token');
+    component.accessFile(1);
     expect(router.navigate).toHaveBeenCalledWith(['/']);
-    expect(router.navigate).toHaveBeenCalledWith(['/download'], { queryParams: { downloadToken: 'active-token' } });
+    expect(router.navigate).toHaveBeenCalledWith(['/download'], { queryParams: { fileId: 1 } });
   });
 
-  it('does not navigate without a download token', () => {
-    component.accessFile('');
+  it('does not navigate with an invalid file id', () => {
+    component.accessFile(0);
     expect(router.navigate).not.toHaveBeenCalled();
   });
 

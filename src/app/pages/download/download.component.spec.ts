@@ -2,25 +2,39 @@ import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
-import { FileDownloadResponse, FileService } from '../../core/service/file.service';
+import { FileDownloadResponse, FileService, UserFile } from '../../core/service/file.service';
 import { DownloadComponent } from './download.component';
 
 describe('DownloadComponent', () => {
   let component: DownloadComponent;
   let fixture: ComponentFixture<DownloadComponent>;
-  const fileService = { getFileInfoByToken: jest.fn(), downloadFileWtihToken: jest.fn() };
+  const fileService = {
+    getFileById: jest.fn(),
+    getFileInfoByToken: jest.fn(),
+    downloadFileWithObjectPath: jest.fn(),
+    downloadFileWithToken: jest.fn(),
+  };
   const response: FileDownloadResponse = {
     filename: 'report.txt', size: 2048, contentType: 'text/plain', status: 'stored', id: 1,
     userId: 4, bucket: 'documents', objectPath: 'users/4/report', isProtectPassword: true,
     downloadToken: 'token-1', expiresAt: new Date(Date.now() + 2 * 86400000).toISOString(),
   };
 
-  async function create(token = 'token-1'): Promise<void> {
+  async function create(token = 'token-1', fileId = ''): Promise<void> {
     await TestBed.configureTestingModule({
       imports: [DownloadComponent],
       providers: [
         { provide: FileService, useValue: fileService },
-        { provide: ActivatedRoute, useValue: { snapshot: { queryParamMap: { get: () => token } } } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: {
+              queryParamMap: {
+                get: (name: string) => (name === 'downloadToken' ? token : fileId),
+              },
+            },
+          },
+        },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(DownloadComponent);
@@ -29,8 +43,10 @@ describe('DownloadComponent', () => {
   }
 
   beforeEach(() => {
+    fileService.getFileById.mockReset();
     fileService.getFileInfoByToken.mockReset().mockReturnValue(of(response));
-    fileService.downloadFileWtihToken.mockReset();
+    fileService.downloadFileWithObjectPath.mockReset();
+    fileService.downloadFileWithToken.mockReset();
   });
 
   afterEach(() => jest.restoreAllMocks());
@@ -48,6 +64,28 @@ describe('DownloadComponent', () => {
     await create();
     expect(component.isProtectPassword).toBe(false);
     expect(component.downloadForm.valid).toBe(true);
+  });
+
+  it('loads and initializes file information from a file id', async () => {
+    const userFile: UserFile = {
+      id: 12,
+      filename: 'private.pdf',
+      size: 4096,
+      contentType: 'application/pdf',
+      objectPath: 'users/4/private',
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+      isProtectPassword: false,
+      downloadToken: '',
+    };
+    fileService.getFileById.mockReturnValue(of(userFile));
+
+    await create('', '12');
+
+    expect(fileService.getFileById).toHaveBeenCalledWith(12);
+    expect(fileService.getFileInfoByToken).not.toHaveBeenCalled();
+    expect(component.fileName).toBe('private.pdf');
+    expect(component.size).toBe('4.00 KB');
+    expect(component.objectPath).toBe('users/4/private');
   });
 
   it('reports an empty file-info response', async () => {
@@ -77,7 +115,7 @@ describe('DownloadComponent', () => {
     await create();
     component.onSubmit();
     expect(component.submitted).toBe(true);
-    expect(fileService.downloadFileWtihToken).not.toHaveBeenCalled();
+    expect(fileService.downloadFileWithToken).not.toHaveBeenCalled();
   });
 
   it('downloads the blob with the supplied password', async () => {
@@ -86,14 +124,14 @@ describe('DownloadComponent', () => {
     const click = jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined);
     Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: jest.fn(() => 'blob:url') });
     Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: jest.fn() });
-    fileService.downloadFileWtihToken.mockReturnValue(of(new HttpResponse({
+    fileService.downloadFileWithToken.mockReturnValue(of(new HttpResponse({
       body: new Blob(['content']),
       headers: new HttpHeaders({ 'Content-Disposition': "attachment; filename*=UTF-8''report%20final.txt" }),
     })));
 
     component.onSubmit();
 
-    expect(fileService.downloadFileWtihToken).toHaveBeenCalledWith('token-1', 'secret');
+    expect(fileService.downloadFileWithToken).toHaveBeenCalledWith('token-1', 'secret');
     expect(click).toHaveBeenCalled();
     expect(component.message).toBe('Téléchargement terminé.');
     expect(component.downloading).toBe(false);
@@ -102,7 +140,7 @@ describe('DownloadComponent', () => {
   it('reports an empty download response', async () => {
     await create();
     component.form['password'].setValue('secret');
-    fileService.downloadFileWtihToken.mockReturnValue(of(new HttpResponse({ body: null })));
+    fileService.downloadFileWithToken.mockReturnValue(of(new HttpResponse({ body: null })));
     component.onSubmit();
     expect(component.message).toBe('Le fichier reçu est vide.');
   });
@@ -115,7 +153,7 @@ describe('DownloadComponent', () => {
   ])('maps download status %s to its message', async (status, message) => {
     await create();
     component.form['password'].setValue('secret');
-    fileService.downloadFileWtihToken.mockReturnValue(throwError(() => ({ status })));
+    fileService.downloadFileWithToken.mockReturnValue(throwError(() => ({ status })));
     component.onSubmit();
     expect(component.message).toBe(message);
   });

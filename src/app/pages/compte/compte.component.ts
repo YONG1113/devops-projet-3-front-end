@@ -73,12 +73,13 @@ export class CompteComponent implements OnInit {
     this.router.navigate(['/']);
   }
 
-  accessFile(downloadToken: string): void {
-    if (!downloadToken) {
+  accessFile(id: number): void {
+    if (!Number.isInteger(id) || id <= 0) {
       return;
     }
+
     this.router.navigate(['/download'], {
-      queryParams: { downloadToken: downloadToken },
+      queryParams: { fileId: id },
     });
   }
 

@@ -63,15 +63,18 @@ export class FileService {
     return this.httpClient.post<FileUploadResponse>('/api/file', formData);
   }
 
-  downloadFile(objectPath: string): Observable<HttpResponse<Blob>> {
-    return this.httpClient.get('/api/file', {
-      params: { objectPath },
-      responseType: 'blob',
-      observe: 'response',
-    });
+  downloadFileWithObjectPath(objectPath: string, password: string): Observable<HttpResponse<Blob>> {
+    return this.httpClient.post(
+      '/api/file',
+      { objectPath, password: password || null },
+      {
+        responseType: 'blob',
+        observe: 'response',
+      },
+    );
   }
 
-  downloadFileWtihToken(token: string, password: string): Observable<HttpResponse<Blob>> {
+  downloadFileWithToken(token: string, password: string): Observable<HttpResponse<Blob>> {
     return this.httpClient.post(
       '/api/file/download',
       { token, password: password || null },
@@ -96,5 +99,9 @@ export class FileService {
 
   deleteFile(id: number): Observable<void> {
     return this.httpClient.delete<void>(`/api/file/${id}`);
+  }
+
+  getFileById(id: number): Observable<UserFile> {
+    return this.httpClient.get<UserFile>(`/api/file/${id}`);
   }
 }

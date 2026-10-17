@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
-import { FileService } from '../../core/service/file.service';
+import { FileDownloadResponse, FileService, UserFile } from '../../core/service/file.service';
 import { getRemainingCalendarDays } from '../../core/utils/file-expiration';
 
 type ExpirationState = 'expired' | 'today' | 'tomorrow' | 'active';
@@ -29,8 +29,10 @@ export class DownloadComponent {
 
   submitted = false;
   fileName = '';
+  objectPath = '';
   size = '';
   downloadToken = this.route.snapshot.queryParamMap.get('downloadToken') ?? '';
+  fileId = this.route.snapshot.queryParamMap.get('fileId') ?? '';
   expirationState: ExpirationState = 'expired';
   expirationMessage = '';
   isProtectPassword = false;
@@ -39,10 +41,41 @@ export class DownloadComponent {
   downloadForm: FormGroup = new FormGroup({});
 
   ngOnInit(): void {
-    if (!this.downloadToken || this.downloading) {
+    if (this.fileId) {
+      this.loadFileById();
+      return;
+    }
+
+    if (!this.downloadToken) {
       this.message = 'Le chemin nest pas correct.';
       return;
     }
+
+    this.loadFileByToken();
+  }
+
+  private loadFileById(): void {
+    const id = Number(this.fileId);
+    if (!Number.isInteger(id) || id <= 0) {
+      this.message = 'Identifiant de fichier incorrect.';
+      return;
+    }
+
+    this.downloading = true;
+    this.fileService
+      .getFileById(id)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => (this.downloading = false)),
+      )
+      .subscribe({
+        next: (file) => this.initializeFile(file),
+        error: (error) => this.handleFileInformationError(error),
+      });
+  }
+
+  private loadFileByToken(): void {
+    this.downloading = true;
     this.fileService
       .getFileInfoByToken(this.downloadToken)
       .pipe(
@@ -50,35 +83,39 @@ export class DownloadComponent {
         finalize(() => (this.downloading = false)),
       )
       .subscribe({
-        next: (response) => {
-          if (!response) {
-            return;
-          }
-          this.fileName = response.filename;
-          this.size = response.size != null ? this.formatFileSize(response.size) : '';
-          this.isProtectPassword = response.isProtectPassword;
-          this.expirationMessage = this.formatExpirationMessage(response.expiresAt);
-          if (response.isProtectPassword) {
-            this.downloadForm = this.formBuilder.group({
-              password: ['', Validators.required],
-            });
-          }
-        },
-        error: (error) => {
-          if (error.status === 401) {
-            this.message = 'Veuillez vous connecter pour télécharger ce fichier.';
-          } else if (error.status === 404) {
-            this.message = 'Fichier introuvable.';
-          } else if (error.status === 410) {
-            this.expirationState = 'expired';
-            this.expirationMessage =
-              "Ce fichier n'est plus disponible en téléchargement car il a expiré.";
-            this.message = 'Ce fichier a expiré.';
-          } else {
-            this.message = 'Le téléchargement a échoué.';
-          }
-        },
+        next: (file) => this.initializeFile(file),
+        error: (error) => this.handleFileInformationError(error),
       });
+  }
+
+  private initializeFile(file: UserFile | FileDownloadResponse | null): void {
+    if (!file) {
+      return;
+    }
+
+    this.fileName = file.filename;
+    this.size = file.size != null ? this.formatFileSize(file.size) : '';
+    this.objectPath = file.objectPath;
+    this.isProtectPassword = file.isProtectPassword;
+    this.expirationMessage = this.formatExpirationMessage(file.expiresAt);
+    this.downloadForm = file.isProtectPassword
+      ? this.formBuilder.group({ password: ['', Validators.required] })
+      : this.formBuilder.group({});
+  }
+
+  private handleFileInformationError(error: { status?: number }): void {
+    if (error.status === 401) {
+      this.message = 'Veuillez vous connecter pour télécharger ce fichier.';
+    } else if (error.status === 404) {
+      this.message = 'Fichier introuvable.';
+    } else if (error.status === 410) {
+      this.expirationState = 'expired';
+      this.expirationMessage =
+        "Ce fichier n'est plus disponible en téléchargement car il a expiré.";
+      this.message = 'Ce fichier a expiré.';
+    } else {
+      this.message = 'Le téléchargement a échoué.';
+    }
   }
 
   onSubmit(): void {
@@ -88,8 +125,17 @@ export class DownloadComponent {
     }
 
     this.downloading = true;
-    this.fileService
-      .downloadFileWtihToken(this.downloadToken, this.downloadForm.get('password')?.value)
+    const downloadRequest = this.fileId
+      ? this.fileService.downloadFileWithObjectPath(
+          this.objectPath,
+          this.downloadForm.get('password')?.value,
+        )
+      : this.fileService.downloadFileWithToken(
+          this.downloadToken,
+          this.downloadForm.get('password')?.value,
+        );
+
+    downloadRequest
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => (this.downloading = false)),

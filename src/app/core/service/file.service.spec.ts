@@ -30,17 +30,16 @@ describe('FileService', () => {
   });
 
   it('downloads a file by object path', () => {
-    service.downloadFile('users/4/file-id').subscribe();
-    const request = http.expectOne(
-      (candidate) => candidate.url === '/api/file' && candidate.params.get('objectPath') === 'users/4/file-id',
-    );
-    expect(request.request.method).toBe('GET');
+    service.downloadFileWithObjectPath('users/4/file-id', 'secret').subscribe();
+    const request = http.expectOne('/api/file');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ objectPath: 'users/4/file-id', password: 'secret' });
     expect(request.request.responseType).toBe('blob');
     request.flush(new Blob());
   });
 
   it('downloads a file with its public token and password', () => {
-    service.downloadFileWtihToken('token-1', 'secret').subscribe();
+    service.downloadFileWithToken('token-1', 'secret').subscribe();
     const request = http.expectOne('/api/file/download');
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual({ token: 'token-1', password: 'secret' });
