@@ -17,7 +17,7 @@ export interface FileUploadResponse {
 
 export interface FileDownloadResponse {
   filename: string;
-  size: number;
+  size: number | null;
   contentType: string;
   status: string;
   id: number;

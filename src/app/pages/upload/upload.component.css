@@ -351,12 +351,25 @@
         flex: 1;
         width: auto;
         min-width: 0;
+        height: auto;
+        min-height: 48px;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .file-name-label span {
+        line-height: 22px;
     }
 
     .file-name-label span:first-child {
         display: block;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .file-name-label span:last-child {
+        flex-shrink: 0;
         white-space: nowrap;
     }
 
