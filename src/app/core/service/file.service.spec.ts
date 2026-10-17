@@ -41,10 +41,9 @@ describe('FileService', () => {
 
   it('downloads a file with its public token and password', () => {
     service.downloadFileWtihToken('token-1', 'secret').subscribe();
-    const request = http.expectOne(
-      (candidate) => candidate.url === '/api/file/download' && candidate.params.get('token') === 'token-1',
-    );
-    expect(request.request.params.get('password')).toBe('secret');
+    const request = http.expectOne('/api/file/download');
+    expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual({ token: 'token-1', password: 'secret' });
     request.flush(new Blob());
   });
 

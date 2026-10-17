@@ -72,11 +72,14 @@ export class FileService {
   }
 
   downloadFileWtihToken(token: string, password: string): Observable<HttpResponse<Blob>> {
-    return this.httpClient.get('/api/file/download', {
-      params: { token, password },
-      responseType: 'blob',
-      observe: 'response',
-    });
+    return this.httpClient.post(
+      '/api/file/download',
+      { token, password: password || null },
+      {
+        responseType: 'blob',
+        observe: 'response',
+      },
+    );
   }
 
   getFileInfoByToken(token: string): Observable<FileDownloadResponse> {
