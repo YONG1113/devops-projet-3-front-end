@@ -60,7 +60,7 @@ export class FileService {
     formData.append('expirationDays', String(expirationDays));
     formData.append('password', password);
 
-    return this.httpClient.post<FileUploadResponse>('/api/file', formData);
+    return this.httpClient.post<FileUploadResponse>('/api/file/upload', formData);
   }
 
   downloadFileWithObjectPath(objectPath: string, password: string): Observable<HttpResponse<Blob>> {

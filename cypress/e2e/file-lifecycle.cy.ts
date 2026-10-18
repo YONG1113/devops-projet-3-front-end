@@ -42,7 +42,7 @@ describe('File lifecycle with the fixed E2E account', () => {
     cy.location('pathname').should('eq', '/upload');
     cy.contains(filename).should('be.visible');
 
-    cy.intercept('POST', '/api/file').as('uploadFile');
+    cy.intercept('POST', '/api/file/upload').as('uploadFile');
     cy.get('#expirationDays').select('3 jours');
     cy.get('button.televerser-button').should('be.enabled').click();
     cy.wait('@uploadFile').then(({ response }) => {

@@ -19,7 +19,7 @@ describe('FileService', () => {
     const file = new File(['content'], 'report.txt', { type: 'text/plain' });
     service.uploadFile(file, '4', 3, 'secret').subscribe();
 
-    const request = http.expectOne('/api/file');
+    const request = http.expectOne('/api/file/upload');
     const body = request.request.body as FormData;
     expect(request.request.method).toBe('POST');
     expect(body.get('file')).toBe(file);
