@@ -1,18 +1,41 @@
 import { Routes } from '@angular/router';
-import { RegisterComponent } from './pages/register/register.component';
-import { LoginComponent } from './pages/login/login.component';
-import { HomeComponent } from './pages/home/home.component';
-import { UploadComponent } from './pages/upload/upload.component';
-import { DownloadComponent } from './pages/download/download.component';
-import { CompteComponent } from './pages/compte/compte.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent, pathMatch: 'full' },
-  { path: 'register', component: RegisterComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'upload', component: UploadComponent },
-  { path: 'download', component: DownloadComponent },
-  { path: 'compte', component: CompteComponent, canActivate: [authGuard] },
-  { path: '**', redirectTo: 'login' },
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./pages/home/home.component').then((module) => module.HomeComponent),
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./pages/register/register.component').then((module) => module.RegisterComponent),
+  },
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./pages/login/login.component').then((module) => module.LoginComponent),
+  },
+  {
+    path: 'upload',
+    loadComponent: () =>
+      import('./pages/upload/upload.component').then((module) => module.UploadComponent),
+  },
+  {
+    path: 'download',
+    loadComponent: () =>
+      import('./pages/download/download.component').then((module) => module.DownloadComponent),
+  },
+  {
+    path: 'compte',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./pages/compte/compte.component').then((module) => module.CompteComponent),
+  },
+  {
+    path: '**',
+    redirectTo: 'login',
+  },
 ];
