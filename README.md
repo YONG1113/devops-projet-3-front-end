@@ -207,7 +207,7 @@ npm run build -- --no-progress
 Les fichiers générés sont placés dans :
 
 ```text
-dist/etudiant-frontend/browser/
+dist/datashare-frontend/browser/
 ```
 
 Angular applique les budgets suivants :
