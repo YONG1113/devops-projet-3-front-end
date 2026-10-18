@@ -5,14 +5,13 @@ import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, switchMap } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from '../../shared/material.module';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { validateSelectedFile } from '../../core/utils/file-validation';
 
 @Component({
   selector: 'app-upload',
   standalone: true,
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './upload.component.html',
   styleUrl: './upload.component.css',
 })
