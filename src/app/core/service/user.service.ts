@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 export class UserService {
   constructor(private httpClient: HttpClient) {}
 
-  register(user: Register): Observable<Object> {
+  register(user: Register): Observable<object> {
     return this.httpClient.post('/api/register', user);
   }
 

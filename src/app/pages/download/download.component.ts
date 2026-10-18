@@ -1,12 +1,6 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { FileDownloadResponse, FileService, UserFile } from '../../core/service/file.service';
@@ -21,7 +15,7 @@ type ExpirationState = 'expired' | 'today' | 'tomorrow' | 'active';
   templateUrl: './download.component.html',
   styleUrl: './download.component.css',
 })
-export class DownloadComponent {
+export class DownloadComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private fileService = inject(FileService);

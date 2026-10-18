@@ -32,7 +32,7 @@ export class RegisterComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   private router = inject(Router);
   registerForm: FormGroup = new FormGroup({});
-  submitted: boolean = false;
+  submitted = false;
   errorMessage = '';
 
   ngOnInit() {
@@ -64,7 +64,7 @@ export class RegisterComponent implements OnInit {
       .register(registerUser)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (response) => {
+        next: () => {
           alert('SUCCESS!! :-)');
           this.router.navigate(['/login']);
         },

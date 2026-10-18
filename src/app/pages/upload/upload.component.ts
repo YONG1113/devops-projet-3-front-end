@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { FileService } from '../../core/service/file.service';
 import { UserService } from '../../core/service/user.service';
 import { Router } from '@angular/router';
@@ -15,7 +15,7 @@ import { validateSelectedFile } from '../../core/utils/file-validation';
   templateUrl: './upload.component.html',
   styleUrl: './upload.component.css',
 })
-export class UploadComponent {
+export class UploadComponent implements OnInit {
   private fileService = inject(FileService);
   private userService = inject(UserService);
   private router = inject(Router);
