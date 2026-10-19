@@ -1,43 +1,61 @@
 # Performance — DataShare
 
-Mesures effectuées les **13 et 18 octobre 2026** sur un Mac local, avec Java 21, Spring Boot 3.5.5 et le PostgreSQL Supabase configuré. Ces chiffres constituent une référence locale, pas un engagement de production.
+Mesures effectuées les **13, 18 et 19 octobre 2026** sur un Mac local, avec Java 21, Spring Boot 3.5.5 et le PostgreSQL Supabase configuré. Ces chiffres constituent une référence locale, pas un engagement de production.
 
-## Test d'un endpoint serveur
+## Test de charge des fonctionnalités métier
 
-Endpoint : `GET /actuator/health`. L'application a été lancée sur le port `18080`, puis testée avec ApacheBench :
+Le test de charge a été réalisé avec k6 sur les fonctionnalités de connexion,
+consultation des fichiers, upload, téléchargement et suppression. La charge est
+montée progressivement jusqu'à cinq utilisateurs virtuels utilisant un même
+compte de test. Chaque itération a envoyé un petit fichier texte, puis l'a
+supprimé avec l'API applicative.
 
-```bash
-ab -n 200 -c 10 http://127.0.0.1:18080/actuator/health
-```
-
-Résultats :
+### Conditions du test
 
 ```text
-Complete requests:      200
-Failed requests:        0
-Requests per second:    282.68
-Time per request:       35.376 ms (concurrency 10)
-Processing mean:        31 ms
-p50:                    20 ms
-p90:                    70 ms
-p95:                    87 ms
-p99:                    101 ms
-maximum:                106 ms
+Montée en charge             : 10 s jusqu'à 2 utilisateurs virtuels
+Charge principale           : 30 s jusqu'à 5 utilisateurs virtuels
+Descente en charge          : 10 s
+Utilisateurs virtuels max.  : 5
+Stockage                    : Supabase Storage
+Base de données             : PostgreSQL Supabase
 ```
 
-La première requête à froid a pris environ 730 ms, notamment à cause de l'initialisation du DispatcherServlet et des contrôles de santé. Après échauffement, 100 % des requêtes ont réussi et le p95 reste inférieur à 100 ms. Ce test sollicite un endpoint léger ; il ne mesure ni upload, ni transfert Supabase, ni débit de gros fichiers.
+### Résultats
 
-## Budget serveur proposé
+| Fonctionnalité        | Temps moyen |   Médiane |       p90 |       p95 |   Maximum |
+| --------------------- | ----------: | --------: | --------: | --------: | --------: |
+| Connexion             |   145,61 ms | 133,89 ms | 198,84 ms | 206,63 ms | 231,02 ms |
+| Liste des fichiers    |    54,94 ms |  44,94 ms | 109,87 ms | 126,71 ms | 137,44 ms |
+| Upload                |   216,65 ms | 207,51 ms | 271,52 ms | 278,37 ms | 541,79 ms |
+| Téléchargement        |   240,57 ms | 227,24 ms | 334,38 ms | 381,28 ms | 492,29 ms |
+| Suppression           |   192,84 ms | 171,59 ms | 245,50 ms | 261,39 ms | 551,49 ms |
+| Ensemble des requêtes |   169,80 ms | 167,06 ms | 268,51 ms | 306,78 ms | 541,79 ms |
 
-| Endpoint/scénario                  |             Budget p95 | Taux d'erreur | Remarque                                        |
-| ---------------------------------- | ---------------------: | ------------: | ----------------------------------------------- |
-| `GET /actuator/health` chaud       |               < 150 ms |       < 0,1 % | budget respecté par la mesure locale            |
-| `POST /api/login`                  |               < 500 ms |         < 1 % | BCrypt rend volontairement l'opération coûteuse |
-| `GET /api/files` pour 100 fichiers |               < 500 ms |         < 1 % | ajouter pagination au-delà de 100               |
-| Upload hors transfert du contenu   |                  < 1 s |         < 1 % | mesurer séparément le débit réseau/Storage      |
-| Téléchargement                     | début de réponse < 1 s |         < 1 % | streaming requis pour les fichiers volumineux   |
+### Synthèse
 
-Une campagne représentative doit compléter cette base avec k6/JMeter : montée progressive 1, 10 puis 25 utilisateurs, fichiers de 1 Mio/100 Mio/1 Gio, Supabase réel, p50/p95/p99, CPU, mémoire, connexions JDBC et taux d'erreur.
+```text
+Utilisateurs virtuels maximum : 5
+Itérations terminées          : 73
+Requêtes HTTP                 : 365
+Débit moyen                   : 7,17 requêtes/s
+Vérifications réussies        : 438/438
+Taux d'erreur HTTP            : 0 %
+```
+
+### Budgets et interprétation
+
+| Fonctionnalité     | Budget p95 | p95 mesuré | Taux d'erreur cible | Résultat |
+| ------------------ | ---------: | ---------: | ------------------: | -------- |
+| Connexion          |   < 500 ms |  206,63 ms |               < 1 % | Conforme |
+| Liste des fichiers |   < 500 ms |  126,71 ms |               < 1 % | Conforme |
+| Upload             |      < 2 s |  278,37 ms |               < 1 % | Conforme |
+| Téléchargement     |      < 2 s |  381,28 ms |               < 1 % | Conforme |
+| Suppression        |   < 500 ms |  261,39 ms |               < 1 % | Conforme |
+
+Tous les budgets définis sont respectés et aucune erreur HTTP ou fonctionnelle
+n'a été observée pendant les 73 itérations. Le téléchargement est l'opération
+la plus lente au p95, mais reste largement sous le seuil de 2 secondes.
 
 ## Build et budget front-end
 
@@ -113,6 +131,8 @@ Les corrections suivantes ont été réalisées :
    ne plus charger l'intégralité des fichiers en mémoire.
 4. Le bundle initial est passé de 689,87 kB à 265,08 kB et respecte maintenant
    le budget de 500 kB.
+5. Un test de charge k6 couvre désormais la connexion, la liste des fichiers,
+   l'upload, le téléchargement et la suppression, avec un taux d'erreur de 0 %.
 
 Les optimisations suivantes restent à réaliser :
 
@@ -123,5 +143,3 @@ Les optimisations suivantes restent à réaliser :
 3. Paginer `/api/files` lorsque l'historique contient un grand nombre de
    fichiers et vérifier les index sur `user_id`, `expires_at` et
    `download_token_hash`.
-4. Compléter les mesures avec un test de charge des endpoints métier :
-   connexion, liste des fichiers, upload et téléchargement.
